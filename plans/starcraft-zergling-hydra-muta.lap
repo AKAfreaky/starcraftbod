@@ -1,0 +1,469 @@
+; StarCraft BOD AI
+; Plan by Simon Davies
+
+; This plan is meant for a Zerg AI, and makes use of Zerglings,
+; Hydralisks and Mutalisks, and builds multiple expansions and defenses.
+; Is a fairly defensive bot and will only attack once the force size reaches a
+; set limit.
+(
+	;(documentation "" "Simon Davies" "StarCraft - Brood War BOD AI")
+	
+	; Action Patterns
+	; Build a spawning pool action pattern
+	(AP build-pool-ap (seconds 10.0) (build_spawning_pool))
+	(AP build-hydralisk-den-ap (minutes 1.0) (build_hydralisk_den))
+	(AP build-macro-hatchery-ap (seconds 1.0) (build_macro_hatchery))
+	
+	; Attack the enemy base
+	(AP attack-enemy (minutes 1.0) (attack))
+	; Defend
+	(AP set-to-defend (seconds 1.0) (defend))
+	
+	; Spawn Zerglings AP - Action pattern required because of the drive that calls this.
+	(AP spawn-zerglings-ap (seconds 1.0) (spawn_zerglings))
+	
+	; Spawn multiple overlords AP
+	(AP spawn-3-overlords-ap (seconds 1.0) 
+		(spawn_overlord spawn_overlord spawn_overlord))
+	(AP spawn-2-overlords-ap (seconds 1.0) 
+		(spawn_overlord spawn_overlord))
+	
+	; Produce more drones competence.
+	; Will produce more drones if the resources are available
+	(C drone-production-competence (minutes 10.0) (goal ((game_over)))
+		(elements
+			(
+				(try-spawn-drone (trigger ((drone_count 50 <) 
+					(mineral_count 50 >=) (larvae_count 0 >) (predicted_supply_available 2 >))) spawn_drone -1)
+			)
+		)
+	)
+	
+	; Produce more overlords competence.
+	; Will produce different number of overlords depending on how many minerals are available
+	(C build-overlords-competence (minutes 1.0) (goal ((supply_available 4 >)))
+		(elements
+			(
+				(build-lots-overlord (trigger ((mineral_count 300 >) 
+					(larvae_count 3 >=))) spawn-3-overlords-ap -1)
+			)
+			(
+				(build-two-overlords (trigger ((mineral_count 200 >) 
+					(larvae_count 2 >=))) spawn-2-overlords-ap -1)
+			)
+			(
+				(building_overlords (trigger ((mineral_count 100 >=) 
+					(larvae_count 0 >) 
+					(overlords_morphing 1 <))) spawn_overlord -1)
+			)
+		)
+	)
+	
+	; Build spawning pool if resources are available 
+	(C build-pool-competence (seconds 10.0) (goal ((has_spawning_pool)))
+		(elements
+			(
+				(build-spawning-pool (trigger ((mineral_count 200 >)))
+				 build-pool-ap -1)
+			)
+		)
+	)
+	; Build hydralisk den competence
+	; Builds hydralisk den if resources available
+	(C build-hydralisk-den-competence (seconds 10.0) (goal ((has_hydralisk_den)))
+		(elements
+			(
+				(build-hydralisk-den (trigger (
+					(has_completed_spawning_pool) (mineral_count 100 >=)
+					(gas_count 50 >=))) build-hydralisk-den-ap -1)
+			)
+		)
+	)
+	; Build spire competence
+	; Builds spire to allow the production of air units if resources are available
+	(C build-spire-competence (seconds 1.0) (goal ((has_spire)))
+		(elements
+			(
+				(build-spire (trigger ((has_completed_lair) 
+					(mineral_count 200 >=) 
+					(gas_count 200 >=))) build_spire -1)
+			)
+		)
+	)
+	; Build expansion competence
+	; Builds an expansion
+	; This requires drone to already be in position by using send-drone-to-expansion action
+	(C build-expansion-competence (seconds 1.0) (goal ((game_over)))
+		(elements
+			(
+				(build-hatchery (trigger (
+					(check_drone_ready_expand))) build_expansion_hatchery -1)
+			)
+		)
+	)
+	; Sends drone to expansion
+	(C send-drone-to-expansion (minutes 1.0) (goal ((check_drone_ready_expand 1 =)))
+		(elements
+			(
+				(send-drone (trigger ()) send_drone_expansion -1)
+			)
+		)
+	)
+	
+	; Build try to build forces competences
+	; Builds higher level forces such as mutalisks and hydralisks
+	; Zerglings aren't covered 
+	(C build-forces-competence (seconds 0.75) (goal ((game_over)))
+		(elements
+			(
+				(try-spawn-lurker (trigger ((has_completed_hydralisk_den)
+					(hydralisk_count 1 >)
+					(is_attacking 0 =)
+					(has_completed_lurker_aspect)
+					(mineral_count 50 >=) (gas_count 100 >=) 
+					(supply_available 2 >=))) spawn_lurker -1)
+			)
+			(
+				(try-spawn-mutalisks (trigger ((has_completed_spire)
+				 (mineral_count 200 >=) (gas_count 200 >=) 
+				 (supply_available 4 >=))) spawn_mutalisk -1)
+			)
+			(
+				(try-spawn-hydralisks (trigger ((has_completed_hydralisk_den) 
+					(mineral_count 75 >=) (gas_count 25 >=) 
+					(supply_available 2 >=))) spawn_hydralisk -1)
+			)
+		)
+	)
+	
+	; Send a scout to find enemy base competence
+	; Could be extended to have different scouting abilities
+	(C scouting-competence (seconds 1.0) (goal ((found_enemy_base)))
+		(elements
+			(
+				(scout-drone (trigger ((has_spawning_pool) 
+					(scouting_drone 0 =))) scout_drone -1)
+			)
+		)
+	)
+	; Collecting gas competence
+	; Builds a geyser if the player doesn't have one
+	; Sends drones to mine gas if they aren't already
+	(C collect-gas-competence (seconds 1.0) (goal ((gas_saturated)))
+		(elements
+			(
+				(put-workers-on-gas (trigger ((all_extractors_completed) 
+					(gas_saturated 0 =) 
+					(has_extractor))) start_collecting_gas -1)
+			)
+			(
+				(build-extractor (trigger ((has_extractor_saturation 0 =)
+					(has_extractor 0 =)
+					(mineral_count 25 >=)
+					)) build_extractor 1)
+			)
+		)
+	)
+	; Researchs the zergling speed upgrade from the spawning pool
+	; if resources are available
+	(C zergling-upgrades (seconds 1.0) (goal ((has_zergling_speed)))
+		(elements
+			(
+				(research-zergling-speed (trigger ((has_completed_spawning_pool) 
+					(has_zergling_speed 0 =))) upgrade_zergling_speed -1)
+			)
+		)
+	)
+	; Researchs the hydralisk speed and range upgrade from the hydralisk den
+	; if resources are available
+	(C hydralisk-upgrades (seconds 1.0) (goal ((has_hydralisk_speed) 
+		(has_hydralisk_range)))
+		(elements
+			(
+				(research-hydralisk-speed (trigger ((has_completed_hydralisk_den) 
+					(has_hydralisk_speed 0 =))) upgrade_hydralisk_speed -1)
+			)
+			(
+				(research-hydralisk-range (trigger ((has_completed_hydralisk_den) 
+					(has_hydralisk_range 0 =))) upgrade_hydralisk_range -1)
+			)
+		)
+	)
+	; Builds defences
+	; First upgrades any existing creep colonies to sunken colonies
+	; Then builds extra creep colonies
+	(C build-defences-competence (seconds 1.0) (goal ((game_over)))
+		(elements
+			(
+				(upgrade-sunkens (trigger ((mineral_count 50 >=) 
+					(creep_colony_count 0 >))) upgrade_to_sunken -1)
+			)
+			(
+				(build-creep-colony (trigger ((mineral_count 75 >=)
+												(colony_count 4 <))) build_creep_colony -1)
+			)
+		)
+	)
+	; Upgrade hatchery to Lair for more tech options
+	(C hatchery-upgrade-competence (seconds 1.0) (goal ((has_lair)))
+		(elements
+			(
+				(upgrade-hatchery-to-lair (trigger ((mineral_count 150 >=) 
+					(gas_count 100 >=))) upgrade_to_lair -1)
+			)
+		)
+	)
+	; Research overlord speed upgrade
+	(C overlord-upgrades (seconds 1.0) (goal ((has_overlord_speed)))
+		(elements
+			(
+				(research-overlord-speed (trigger ((mineral_count 150 >) 
+					(gas_count 150 >) 
+					(has_completed_lair))) upgrade_overlord_speed -1)
+			)
+		)
+	)
+	; Get evo chambers
+	; And research ground forces upgrades
+	(C get-ground-upgrades (minutes 1.0) (goal ((zerg_melee_level 2 =) 
+	(zerg_ranged_level 2 =) (zerg_carapace_level 2 =)))
+		(elements
+			(
+				(build-first-evo-chamber (trigger ((evo_chamber_count 0 =) (drone_count 20 >)
+				(mineral_count 75 >) (gas_count 150 >))) build_evolution_chamber -1)
+			)
+			(
+				(build-second-evo-chamber (trigger ((evo_chamber_count 1 =) (drone_count 30 >)
+				(mineral_count 150 >))) build_evolution_chamber -1)
+			)
+			(
+				(build-third-evo-chamber (trigger ((evo_chamber_count 2 =) (drone_count 37 >)
+				(mineral_count 200 >))) build_evolution_chamber -1)
+			)
+			(
+				(upgrade-melee-level1 (trigger ((currently_upgrading_melee 0 =)(evo_chamber_count 0 >)
+				(zerg_melee_level 0 =) (mineral_count 100 >=)
+				(gas_count 100 >=))) zerg_upgrade_melee -1)
+			)
+			(
+				(upgrade-melee-level2 (trigger ((currently_upgrading_melee 0 =)(evo_chamber_count 0 >)
+				(zerg_melee_level 1 =) (mineral_count 150 >=) 
+				(gas_count 150 >=) (has_lair))) zerg_upgrade_melee -1)
+			)
+			(
+				(upgrade-ranged-level1 (trigger ((currently_upgrading_ranged 0 =)(evo_chamber_count 0 >)
+				(zerg_ranged_level 0 =) (mineral_count 100 >=)
+				(gas_count 100 >=))) zerg_upgrade_ranged -1)
+			)
+			(
+				(upgrade-ranged-level2 (trigger ((currently_upgrading_ranged 0 =)(evo_chamber_count 0 >)
+				(zerg_ranged_level 1 =) (mineral_count 150 >=)
+				(gas_count 150 >=) (has_lair))) zerg_upgrade_ranged -1)
+			)
+			(
+				(upgrade-carapace-level1 (trigger ((currently_upgrading_carapace 0 =)(evo_chamber_count 0 >)
+				(zerg_carapace_level 0 =) (mineral_count 150 >=)
+				(gas_count 150 >=))) zerg_upgrade_carapace -1)
+			)
+			(
+				(upgrade-carapace-level2 (trigger ((currently_upgrading_carapace 0 =)(evo_chamber_count 0 >)
+				(zerg_carapace_level 1 =) (mineral_count 225 >=) 
+				(gas_count 225 >=) (has_lair))) zerg_upgrade_carapace -1)
+			)
+		)
+	)
+	; Get air upgrades
+	(C get-air-upgrades (minutes 1.0) (goal ((zerg_flyer_attack_level 2 =) (zerg_flyer_carapace_level 2 =)))
+		(elements
+			(
+				(upgrade-flyer-attack-level1 (trigger ((zerg_flyer_attack_level 0 =)
+				(mineral_count 150 >=) (gas_count 150 >=))) zerg_upgrade_flyer_attacks -1)
+			)
+			(
+				(upgrade-flyer-attack-level2 (trigger ((zerg_flyer_attack_level 1 =)
+				(mineral_count 225 >=) (gas_count 225 >=) 
+				(has_lair))) zerg_upgrade_flyer_attacks -1)
+			)
+			(
+				(upgrade-flyer-carapace-level1 (trigger ((zerg_flyer_carapace_level 0 =)
+				(mineral_count 150 >=) (gas_count 150 >=))) zerg_upgrade_flyer_carapace -1)
+			)
+			(
+				(upgrade-flyer-carapace-level2 (trigger ((zerg_flyer_carapace_level 1 =)
+				(mineral_count 225 >=) (gas_count 225 >=) 
+				(has_lair))) zerg_upgrade_flyer_carapace -1)
+			)
+		)
+	)
+	; Research Lurker aspect allowing Lurkers to be produced
+	(C get-lurker-aspect (minutes 1.0) (goal ((has_lurker_aspect)))
+		(elements
+			(
+				(research-lurker-aspect (trigger ((has_completed_hydralisk_den) 
+				(has_completed_lair)
+				(mineral_count 200 >=) (gas_count 200 >=))) research_lurker_aspect -1)
+			)
+		)
+	)
+	; Drives
+	(RDC life (goal ((game_over)))
+		(drives
+			(
+				; Build more overlords if supply is low
+				(build-supply (trigger ((supply_available 2 <=))) 
+					build-overlords-competence(seconds 2.0))
+			)
+			(
+				; If not building more zerglings, then build more drones if possible
+				(build-drones-low-amount (trigger ((drone_count 15 <))) drone-production-competence(seconds 1.0))
+			)
+			(
+				; Attack the enemy if forces are available
+				(attack-enemy (trigger ((has_completed_spawning_pool) 
+					(force_size 70 >=) (is_attacking 0 =)))
+				attack-enemy(seconds 0.5))
+			)
+			(
+				; Defend the base / retreat when forces are low
+				(defend-base (trigger ((force_size 40 <) (is_attacking))) 
+					set-to-defend(seconds 0.5))
+			)
+			(
+				; Start collecting gas
+				(get-vespene (trigger ((has_completed_spawning_pool) (gas_saturated 0 =))) 
+					collect-gas-competence(seconds 4.0))
+			)
+			(
+				; Send drone to second expansion location to build third base / second expansion
+				(send-to-second-expansion (trigger ((mineral_count 300 >) 
+					(expansion_count 1 =)
+					(supply_used 80 >))) send-drone-to-expansion(seconds 10.0))
+			)
+			(
+				; Send drone to first expansion location to build second base / first expasnion
+				(send-to-first-expansion (trigger ((mineral_count 100 >=) 
+					(expansion_count 0 =)
+					(drone_count 12 >)
+					)) send-drone-to-expansion(seconds 10.0))
+			)
+			(
+				; Build expansion after sending drone to the location
+				(build-expansion (trigger ((check_drone_ready_expand))) 
+					build-expansion-competence(seconds 4.0))
+			)
+			(
+				; If not building more zerglings, then build more drones if possible
+				(build-drones-mid-amount (trigger ((drone_count 30 <))) drone-production-competence(seconds 1.0))
+			)
+			(
+				; Build forces if possible
+				(build-forces (trigger ((has_completed_spawning_pool) 
+					(predicted_supply_available 2 >=) 
+					(drone_count 10 >))) build-forces-competence(seconds 0.5))
+			)
+			(
+				; Build base defences
+				(build-defences (trigger ((sunken_count 5 <) 
+					(has_completed_spawning_pool)
+					(drone_count 18 >)
+					(mineral_count 100 >=))) build-defences-competence(seconds 5.0))
+			)
+			(
+				; Upgrade hatchery to lair to unlock new tech
+				(upgrade-to-lair (trigger ((mineral_count 150 >=) 
+					(gas_count 100 >=) 
+					(has_lair 0 =))) hatchery-upgrade-competence(seconds 10.0))
+			)
+			(
+				; Scout to find enemy base
+				(find-enemy (trigger ((found_enemy_base 0 =) 
+					(has_spawning_pool))) scouting-competence(seconds 5.0))
+			)
+			(
+				; Build Hydralisk Den to allow Hydralisk production
+				(build-hydralisk-den (trigger ((has_completed_spawning_pool) 
+					(has_hydralisk_den 0 =) (mineral_count 100 >=) 
+					(gas_count 50 >=))) build-hydralisk-den-competence(seconds 5.0))
+			)
+			(
+				; Build Spawning Pool to allow Zergling production
+				(build-spawning-pool (trigger ((mineral_count 225 >=) 
+					(has_spawning_pool 0 =))) build-pool-competence(seconds 5.0))
+			)
+			(
+				; Build spire to allow Mutalisk production
+				(build-spire (trigger ((mineral_count 200 >=) 
+					(gas_count 200 >=) 
+					(has_spire 0 =)
+					(supply_used 105 >)
+					)) build-spire-competence(seconds 10.0))
+			)
+			(
+				; Build extra hatcheries for more production / larva
+				(build-macro-hatchery (trigger (
+					(mineral_count 325 >=) (hatchery_count 6 <))) 
+				build-macro-hatchery-ap(seconds 5.0))
+			)
+			(
+				; Research lurker aspect
+				(research-lurker (trigger (
+					(has_completed_hydralisk_den) 
+					(has_completed_lair) 
+					(has_lurker_aspect 0 =) 
+					(mineral_count 200 >) 
+					(gas_count 200 >))) get-lurker-aspect(seconds 5.0))
+			)
+			(
+				; Research zergling speed upgrade
+				(research-zergling-upgrades (trigger (
+					(has_completed_spawning_pool) 
+					(has_zergling_speed 0 =) 
+					(mineral_count 100 >) 
+					(gas_count 100 >))) zergling-upgrades(seconds 5.0))
+			)
+			(
+				; Research Hydralisk speed and range upgrades
+				(research-hydralisk-upgrades (trigger (
+					(has_completed_hydralisk_den) 
+					(has_hydralisk_speed 0 =) 
+					(has_hydralisk_range 0 =) 
+					(mineral_count 150 >) 
+					(gas_count 150 >))) 
+				hydralisk-upgrades(seconds 5.0))
+			)
+			(
+				; Research overlord speed upgrades
+				(research-overlord-upgrades (trigger ((has_completed_lair)
+				 (has_overlord_speed 0 =) (mineral_count 150 >) 
+				 (gas_count 150 >))) overlord-upgrades(seconds 5.0))
+			)
+			(
+				; Research ground forces upgrades at the evo chamber
+				(get-evo-upgrades (trigger (mineral_count 125 >) (drone_count 20 >)
+				(has_completed_spawning_pool)) get-ground-upgrades (seconds 10.0))
+			)
+			(
+				; Research ground forces upgrades at the evo chamber
+				(get-air-upgrades (trigger (mineral_count 200 >) (gas_count 200 >) 
+				(has_completed_spire)) get-air-upgrades (seconds 2.0))
+			)
+			(
+				; Build more drones
+				(keep-building-drones (trigger (
+					(drone_count 25 <))) 
+				drone-production-competence(seconds 1.0))
+			)
+			(
+				; Spawn zerglings if nothing else to do
+				(spawn-zerglings (trigger (
+					(has_completed_spawning_pool) 
+					(predicted_supply_available 4 >)))
+					 spawn-zerglings-ap(seconds 0.05))
+			)
+			(
+				; If not building more zerglings, then build more drones if possible
+				(build-more-drones (trigger ((life))) drone-production-competence)
+			)
+		)
+	)
+)
