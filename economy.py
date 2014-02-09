@@ -32,10 +32,10 @@ class Economy(Behaviour):
         return self.agent.BWBot.bot.resourceManager.getGasCount()
     
     def drone_count(self):
-        return self.agent.BWBot.bot.workerManager.getDroneCount()
+        return self.agent.BWBot.bot.workerManager.getWorkerCount()
     
     def gas_saturated(self):
-        return (self.agent.BWBot.bot.workerManager.getGasDroneCount() >= 3 * (self.agent.BWBot.bot.buildingManager.getExpansionCount() + 1))
+        return (self.agent.BWBot.bot.workerManager.getGasWorkerCount() >= 3 * (self.agent.BWBot.bot.buildingManager.getExpansionCount() + 1))
     
     def supply_total(self):
         return self.agent.BWBot.bot.resourceManager.getSupplyTotal()
