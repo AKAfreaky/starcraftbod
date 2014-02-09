@@ -113,7 +113,7 @@ class Building(Behaviour):
     
     # Building expansions, need to do these in order:
     def send_drone_expansion(self):
-        return self.agent.BWBot.bot.buildingManager.sendDroneToExpansionLocation()
+        return self.agent.BWBot.bot.buildingManager.sendWorkerToExpansionLocation()
     
     # Once send_drone_expansion has been called, check for expansionDroneReady before building expansion
     def check_drone_ready_expand(self):
