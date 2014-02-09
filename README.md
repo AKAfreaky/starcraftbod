@@ -1,3 +1,6 @@
+Behaviour oriented design of a StarCraft AI
+=================
+
 This is the python/jython side of my modifications to Simon Davies' StarCraft AI.
 
 It was created using Behaviour Oriented Design it is run by jyPOSH which calls python code, 
