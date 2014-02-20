@@ -18,10 +18,15 @@ class Production(Behaviour):
         # to correspond to a method of the class.
         Behaviour.__init__(self, agent,
                            ("spawn_drone", "spawn_overlord", "spawn_zerglings",
-                            "spawn_hydralisk", "spawn_mutalisk", "spawn_lurker"), # behaviours
+                            "spawn_hydralisk", "spawn_mutalisk", "spawn_lurker",
+							"train_SCV"), # behaviours
                            ("larvae_count", "overlords_morphing")) # senses
         # These are behaviour variables
     
+	'''
+	 Zerg Units
+	'''
+	
     def spawn_drone(self):
         return self.agent.BWBot.bot.productionManager.spawnDrone()
     
@@ -50,3 +55,11 @@ class Production(Behaviour):
     
     def larvae_count(self):
         return self.agent.BWBot.bot.productionManager.getLarvaCount()
+    	
+    '''
+        Terran Units
+    '''
+    
+    def train_SCV(self):
+        print "Trying to train SCV!"
+        return self.agent.BWBot.bot.productionManager.trainSCV()

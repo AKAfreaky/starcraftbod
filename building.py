@@ -16,12 +16,15 @@ class Building(Behaviour):
         # 'change_dir' and the senses 'see_cookie' and 'fail'. These have
         # to correspond to a method of the class.
         Behaviour.__init__(self, agent,
-                           ("build_spawning_pool", "build_extractor",
+                           # Behaviours
+                           ("build_spawning_pool", "build_extractor", # Zerg
                             "build_macro_hatchery", "build_hydralisk_den",
                             "build_evolution_chamber", "build_creep_colony", 
                             "send_drone_expansion", "build_expansion_hatchery",
-                            "build_spire", "upgrade_to_lair", "upgrade_to_sunken"), # behaviours
-                           ("has_completed_extractor", "has_extractor",
+                            "build_spire", "upgrade_to_lair", "upgrade_to_sunken",
+                            "build_supply_depot"), # Terran
+                            #Senses
+                           ("has_completed_extractor", "has_extractor", # Zerg
                             "has_spawning_pool", "has_completed_spawning_pool", 
                             "has_hydralisk_den", "has_completed_hydralisk_den",
                             "has_spire", "has_completed_spire",
@@ -30,7 +33,7 @@ class Building(Behaviour):
                             "colony_count", "creep_colony_count" , "expansion_count", "sunken_count",
                             "all_extractors_completed", "extractor_count", "has_extractor_saturation",
                             "evo_chamber_count", "completed_evo_chamber_count"
-                            )) # senses
+                            ))
     
     def build_macro_hatchery(self):
         self.log.info("Attempting to build a macro hatchery")
@@ -152,3 +155,8 @@ class Building(Behaviour):
     def has_completed_lair(self):
         return self.agent.BWBot.bot.buildingManager.hasLair(True)
     
+    # Terran Build commands
+    
+    def build_supply_depot(self):
+        return self.agent.BWBot.bot.buildingManager.buildSupplyDepot()
+	

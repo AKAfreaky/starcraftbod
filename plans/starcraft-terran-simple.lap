@@ -1,0 +1,53 @@
+; StarCraft BOD AI
+; Plan by Alex Aiton
+
+; Simple Terran AI
+(
+	; Action Patterns
+	(AP build-supply-ap (seconds 10.0) (build_supply_depot))
+
+	; Competences
+	
+	; Builds a supply depot
+	(C build_supply_competence (seconds 10.0) (goal ((supply_available 4 >)))
+		(elements
+			(
+				(build-supply-depot (trigger ((mineral_count 100 >)))
+				 build-supply-ap -1)
+			)
+		)
+	
+	)
+	
+	; Worker creation competence
+	; Will produce more workers if the resources are available
+	(C worker-production-competence (minutes 10.0) (goal ((game_over)))
+		(elements
+			(
+				(try-spawn-worker (trigger ((drone_count 50 <) (mineral_count 50 >=) (predicted_supply_available 2 >))) 
+					train_SCV -1)
+			)
+		)
+	)
+	
+
+	; Drives
+	(RDC life (goal ((game_over)))
+		(drives
+			(
+				(build_supply (trigger ((supply_available 2 <=)))
+					build_supply_competence(seconds 10.0))
+			)	
+				
+			(
+				(build-worker-low-amount (trigger ((drone_count 15 <))) 
+					worker-production-competence(seconds 1.0))
+			)
+			
+			(
+				; If not building more zerglings, then build more drones if possible
+				(build-more-drones (trigger ((life))) worker-production-competence)
+			)
+		)
+	)
+)
