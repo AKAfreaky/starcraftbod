@@ -8,6 +8,9 @@ from POSH.jython_compat import *
 # behaviour base for POSH behaviours
 from POSH import Behaviour
 
+# enum for unit types
+from jnibwapi.types.UnitType import UnitTypes
+
 class Production(Behaviour):
     """ Contains behaviours and senses that are concerned with the macro side
     of StarCraft. This includes producing drones, mining minerals, collecting gas
@@ -28,27 +31,27 @@ class Production(Behaviour):
 	'''
 	
     def spawn_drone(self):
-        return self.agent.BWBot.bot.productionManager.spawnDrone()
+        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Drone )
     
     def spawn_zerglings(self):
         #self.log.info("Spawning lings...")
-        return self.agent.BWBot.bot.productionManager.spawnZerglings()
+        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Zergling )
     
     def spawn_hydralisk(self):
         #self.log.info("Spawning hydra.")
-        return self.agent.BWBot.bot.productionManager.spawnHydralisk()
+        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Hydralisk )
     
     def spawn_mutalisk(self):
         #self.log.info("Spawning muta.")
-        return self.agent.BWBot.bot.productionManager.spawnMutalisk()
+        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Mutalisk )
     
     def spawn_lurker(self):
         self.log.info("Spawning Lurker.")
-        return self.agent.BWBot.bot.productionManager.spawnLurker()
+        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Lurker )
     
     def spawn_overlord(self):
         #self.log.info("Spawning overlord.")
-        return self.agent.BWBot.bot.productionManager.spawnOverlord()
+        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Overlord )
     
     def overlords_morphing(self):
         return self.agent.BWBot.bot.productionManager.getOverlordsInProduction()
