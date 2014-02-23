@@ -398,12 +398,13 @@
 					(supply_used 105 >)
 					)) build-spire-competence(seconds 10.0))
 			)
-			;(
-			;	; Build extra hatcheries for more production / larva
-			;	(build-macro-hatchery (trigger (
-			;		(mineral_count 325 >=) (hatchery_count 6 <))) 
-			;	build-macro-hatchery-ap(seconds 5.0))
-			;)
+			(
+				; Build extra hatcheries for more production / larva
+				(build-macro-hatchery (trigger (
+					(mineral_count 325 >=) (hatchery_count 6 <)
+					expansion_count 1 >)) 
+				build-macro-hatchery-ap(seconds 5.0))
+			)
 			(
 				; Research lurker aspect
 				(research-lurker (trigger (
