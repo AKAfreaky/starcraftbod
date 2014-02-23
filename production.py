@@ -22,7 +22,7 @@ class Production(Behaviour):
         Behaviour.__init__(self, agent,
                            ("spawn_drone", "spawn_overlord", "spawn_zerglings",
                             "spawn_hydralisk", "spawn_mutalisk", "spawn_lurker",
-							"train_SCV"), # behaviours
+							"train_SCV", "train_marine"), # behaviours
                            ("larvae_count", "overlords_morphing")) # senses
         # These are behaviour variables
     
@@ -64,5 +64,7 @@ class Production(Behaviour):
     '''
     
     def train_SCV(self):
-        print "Trying to train SCV!"
         return self.agent.BWBot.bot.productionManager.trainSCV()
+    
+    def train_marine(self):
+        return self.agent.BWBot.bot.productionManager.trainMarine()
