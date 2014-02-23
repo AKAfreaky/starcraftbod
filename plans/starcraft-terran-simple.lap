@@ -5,6 +5,8 @@
 (
 	; Action Patterns
 	(AP build-supply-ap (seconds 10.0) (build_supply_depot))
+	(AP build-2rax-ap (seconds 10.0) (build_barracks build_barracks))
+	(AP train-marines-ap (seconds 1.0)	(train_marine))
 
 	; Competences
 	
@@ -19,6 +21,15 @@
 	
 	)
 	
+	(C build_two_barracks_competence (seconds 20.0) (goal ((barracks_count 2 >=)))
+		(elements
+			(
+				(build-two-barracks (trigger ((mineral_count 300 >)))
+				 build-2rax-ap -1)
+			)
+		)
+	)
+	
 	; Worker creation competence
 	; Will produce more workers if the resources are available
 	(C worker-production-competence (minutes 10.0) (goal ((game_over)))
@@ -26,6 +37,25 @@
 			(
 				(try-spawn-worker (trigger ((drone_count 50 <) (mineral_count 50 >=) (predicted_supply_available 2 >))) 
 					train_SCV -1)
+			)
+		)
+	)
+	
+	; Collecting gas competence
+	; Builds a geyser if the player doesn't have one
+	; Sends drones to mine gas if they aren't already
+	(C collect-gas-competence (seconds 1.0) (goal ((gas_saturated)))
+		(elements
+			(
+				(put-workers-on-gas (trigger ((all_extractors_completed) 
+					(gas_saturated 0 =) 
+					(has_extractor))) start_collecting_gas -1)
+			)
+			(
+				(build-extractor (trigger ((has_extractor_saturation 0 =)
+					(has_extractor 0 =)
+					(mineral_count 25 >=)
+					)) build_extractor 1)
 			)
 		)
 	)
@@ -43,6 +73,31 @@
 				(build-worker-low-amount (trigger ((drone_count 15 <))) 
 					worker-production-competence(seconds 1.0))
 			)
+			
+			(
+				(build-barracks (trigger ((mineral_count 300 >=) 
+					(barracks_count 0 =))) build_two_barracks_competence(seconds 10.0))
+			)
+			
+			(
+				; Start collecting gas
+				(get-vespene (trigger ((has_completed_spawning_pool) (gas_saturated 0 =))) 
+					collect-gas-competence(seconds 4.0))
+			)
+			
+			(
+				(spawn-marines (trigger (
+					(barracks_count 0 >) 
+					(mineral_count 50 >=)
+					(predicted_supply_available 2 >)))
+					 train-marines-ap(seconds 0.05))
+			)
+			
+			(
+				(build-worker-medium-amount (trigger ((drone_count 15 >))) 
+					worker-production-competence(seconds 3.0))
+			)
+			
 			
 			(
 				; If not building more zerglings, then build more drones if possible
