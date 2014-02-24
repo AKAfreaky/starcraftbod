@@ -19,15 +19,18 @@ class Production(Behaviour):
         # initialise the behaviour by specifying that it provides the action
         # 'change_dir' and the senses 'see_cookie' and 'fail'. These have
         # to correspond to a method of the class.
-        Behaviour.__init__(self, agent,
-                           ("spawn_drone", "spawn_overlord", "spawn_zerglings",
+       Behaviour.__init__(self, agent,
+                           # Behaviours
+                           ("spawn_drone", "spawn_overlord", "spawn_zerglings", # Zerg
                             "spawn_hydralisk", "spawn_mutalisk", "spawn_lurker",
-							"train_SCV", "train_marine"), # behaviours
-                           ("larvae_count", "overlords_morphing")) # senses
-        # These are behaviour variables
+							"train_SCV", "train_marine", # Terran
+                            "train_probe"# Protoss
+                            ), 
+                           # Senses
+                           ("larvae_count", "overlords_morphing")) # Zerg
     
-	'''
-	 Zerg Units
+    '''
+        Zerg Units
 	'''
 	
     def spawn_drone(self):
@@ -68,3 +71,10 @@ class Production(Behaviour):
     
     def train_marine(self):
         return self.agent.BWBot.bot.productionManager.trainMarine()
+    
+    '''
+        Protoss Units
+    '''
+   
+    def train_probe(self):
+        return self.agent.BWBot.bot.productionManager.trainProbe()

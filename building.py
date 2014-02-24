@@ -22,7 +22,8 @@ class Building(Behaviour):
                             "build_evolution_chamber", "build_creep_colony", 
                             "send_drone_expansion", "build_expansion_hatchery",
                             "build_spire", "upgrade_to_lair", "upgrade_to_sunken",
-                            "build_supply_depot", "build_barracks"    # Terran
+                            "build_supply_depot", "build_barracks",    # Terran
+                            "build_pylon" # Protoss
                             ),
                             #Senses
                            ("has_completed_extractor", "has_extractor", # Zerg
@@ -34,7 +35,8 @@ class Building(Behaviour):
                             "colony_count", "creep_colony_count" , "expansion_count", "sunken_count",
                             "all_extractors_completed", "extractor_count", "has_extractor_saturation",
                             "evo_chamber_count", "completed_evo_chamber_count",
-                            "barracks_count" # Terran
+                            "barracks_count", # Terran
+                            "pylon_count" # Protoss
                             ))
     
     def build_macro_hatchery(self):
@@ -167,4 +169,12 @@ class Building(Behaviour):
     
     def barracks_count(self):
         return self.agent.BWBot.bot.buildingManager.getBarracksCount()
+    
+    # Protoss Build commands
+    
+    def build_pylon(self):
+        return self.agent.BWBot.bot.buildingManager.buildPylon()
+    
+    def pylon_count(self):
+        return self.agent.BWBot.bot.buildingManager.pylonCount()
 	
