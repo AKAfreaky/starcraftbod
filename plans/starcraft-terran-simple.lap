@@ -81,7 +81,7 @@
 			
 			(
 				; Start collecting gas
-				(get-vespene (trigger ((has_completed_spawning_pool) (gas_saturated 0 =))) 
+				(get-vespene (trigger ((barracks_count 2 >) (gas_saturated 0 =))) 
 					collect-gas-competence(seconds 4.0))
 			)
 			
