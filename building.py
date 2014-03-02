@@ -23,7 +23,7 @@ class Building(Behaviour):
                             "send_drone_expansion", "build_expansion_hatchery",
                             "build_spire", "upgrade_to_lair", "upgrade_to_sunken",
                             "build_supply_depot", "build_barracks",    # Terran
-                            "build_pylon", "build_gateway" # Protoss
+                            "build_pylon", "build_gateway", "build_forge" # Protoss
                             ),
                             #Senses
                            ("has_completed_extractor", "has_extractor", # Zerg
@@ -36,7 +36,8 @@ class Building(Behaviour):
                             "all_extractors_completed", "extractor_count", "has_extractor_saturation",
                             "evo_chamber_count", "completed_evo_chamber_count",
                             "barracks_count", # Terran
-                            "pylon_count", "gateway_count" # Protoss
+                            "pylon_count", "gateway_count", "completed_gateway_count", # Protoss
+                            "forge_count", "completed_forge_count"
                             ))
     
     def build_macro_hatchery(self):
@@ -176,11 +177,22 @@ class Building(Behaviour):
         return self.agent.BWBot.bot.buildingManager.buildPylon()
     
     def pylon_count(self):
-        return self.agent.BWBot.bot.buildingManager.pylonCount()
+        return self.agent.BWBot.bot.buildingManager.getPylonCount()
     
     def build_gateway(self):
         return self.agent.BWBot.bot.buildingManager.buildGateway()
     
     def gateway_count(self):
-        return self.agent.BWBot.bot.buildingManager.gatewayCount()
+        return self.agent.BWBot.bot.buildingManager.getGatewayCount()
     
+    def completed_gateway_count(self):
+        return self.agent.BWBot.bot.buildingManager.getCompletedGatewayCount()
+    
+    def build_forge(self):
+        return self.agent.BWBot.bot.buildingManager.buildForge()
+    
+    def forge_count(self):
+        return self.agent.BWBot.bot.buildingManager.getForgeCount()
+    
+    def completed_forge_count(self):
+        return self.agent.BWBot.bot.buildingManager.getCompletedForgeCount()
