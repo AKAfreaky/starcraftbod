@@ -27,7 +27,7 @@
 			(
 				(try-spawn-worker (trigger ((drone_count 50 <) 
 											(mineral_count 50 >=) 
-											(predicted_supply_available 2 >))) 
+											(supply_available 2 >))) 
 					train_probe -1)
 			)
 		)
@@ -71,7 +71,7 @@
 				(train_zealots (trigger (
 								(gateway_count 1 >=)
 								(mineral_count 100 >=)
-								(supply_available 2 >)))
+								(supply_available 4 >=)))
 					train-zealot-ap(seconds 0.05))
 			)
 			
@@ -87,14 +87,21 @@
 			)
 			
 			(
-				(build-worker-medium-amount (trigger ((drone_count 15 >))) 
-					worker-production-competence(seconds 3.0))
+				; Build an initial crop of workers
+				(build-worker-initial-amount (trigger ((drone_count 15 <))) 
+					worker-production-competence(seconds 2.0))
+			)
+			
+			(
+				; Hold off building more workers until we have a bit of a defense
+				(build-worker-medium-amount (trigger ((drone_count 15 >) (zealot_count 7 >))) 
+					worker-production-competence(seconds 3.0))			
 			)
 			
 			
 			(
-				; If not building more zerglings, then build more drones if possible
-				(build-more-drones (trigger ((life))) worker-production-competence)
+				; Do nothing
+				(idle (trigger ((life))) idle)
 			)
 		)
 	)

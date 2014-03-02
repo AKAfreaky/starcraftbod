@@ -18,7 +18,7 @@ class Military(Behaviour):
         Behaviour.__init__(self, agent,
                            ("attack", "defend"), # behaviours
                            ("force_size", "is_attacking",
-                            "hydralisk_count")) # senses
+                            "hydralisk_count", "zealot_count")) # senses
         # These are behaviour variables
     
     def attack(self):
@@ -37,3 +37,6 @@ class Military(Behaviour):
     
     def is_attacking(self):
         return self.agent.BWBot.bot.militaryManager.isAttacking()
+    
+    def zealot_count(self):
+        return self.agent.BWBot.bot.militaryManager.getZealotCount()
