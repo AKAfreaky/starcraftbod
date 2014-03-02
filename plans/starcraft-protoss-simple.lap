@@ -5,7 +5,8 @@
 (
 	; Action Patterns
 	(AP build-pylon-ap (seconds 10.0) (build_pylon))
-
+	(AP build_gateway_ap (seconds 10.0) (build_gateway))
+	(AP train-zealots-ap (seconds 1.0)	(train_zealots))
 	; Competences
 	
 	; Builds a pylon
@@ -57,18 +58,28 @@
 	(RDC life (goal ((game_over)))
 		(drives
 			(
-			 (build_inital_pylons(trigger ((pylon_count 3 <)))
-				build_supply_competence(seconds 2.0))
+				(build_inital_pylons(trigger ((pylon_count 3 <)))
+					build_supply_competence(seconds 2.0))
 			)
 			
 			(
-				(build_supply (trigger ((supply_available 2 <=) pylon_count 3 >=))
+				(build_initial_gateways (trigger ((pylon_count 3 >=) (gateway_count 3 <) (mineral_count 150 >)))
+					build_gateway_ap(seconds 1.0))
+			)
+			
+			(
+				(train_zealots (trigger ((gateway_count 3 >=) (mineral_count 100 =) (supply_available 2 >)))
+					train-zealots-ap(seconds 0.05))
+			)
+			
+			(
+				(build_supply (trigger ((predicted_supply_available 2 <=) pylon_count 3 >=))
 					build_supply_competence(seconds 10.0))
 			)
 			
 			(
 				; Start collecting gas
-				(get-vespene (trigger ((pylon_count 3 >) (gas_saturated 0 =))) 
+				(get-vespene (trigger ((pylon_count 3 >=) (gas_saturated 0 =))) 
 					collect-gas-competence(seconds 4.0))
 			)
 			

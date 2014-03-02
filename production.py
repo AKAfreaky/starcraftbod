@@ -24,7 +24,7 @@ class Production(Behaviour):
                            ("spawn_drone", "spawn_overlord", "spawn_zerglings", # Zerg
                             "spawn_hydralisk", "spawn_mutalisk", "spawn_lurker",
 							"train_SCV", "train_marine", # Terran
-                            "train_probe"# Protoss
+                            "train_probe", "train_zealot" # Protoss
                             ), 
                            # Senses
                            ("larvae_count", "overlords_morphing")) # Zerg
@@ -78,3 +78,6 @@ class Production(Behaviour):
    
     def train_probe(self):
         return self.agent.BWBot.bot.productionManager.trainProbe()
+    
+    def train_zealot(self):
+        return self.agent.BWBot.bot.productionManager.trainZealot()
