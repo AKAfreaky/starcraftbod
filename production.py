@@ -80,4 +80,5 @@ class Production(Behaviour):
         return self.agent.BWBot.bot.productionManager.trainProbe()
     
     def train_zealot(self):
+        print("Go zealot go!")
         return self.agent.BWBot.bot.productionManager.trainZealot()

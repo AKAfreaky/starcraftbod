@@ -6,7 +6,7 @@
 	; Action Patterns
 	(AP build-pylon-ap (seconds 10.0) (build_pylon))
 	(AP build_gateway_ap (seconds 10.0) (build_gateway))
-	(AP train-zealots-ap (seconds 1.0)	(train_zealots))
+	(AP train-zealot-ap (seconds 1.0)	(train_zealot))
 	; Competences
 	
 	; Builds a pylon
@@ -38,12 +38,12 @@
 	; Sends drones to mine gas if they aren't already
 	(C collect-gas-competence (seconds 1.0) (goal ((gas_saturated)))
 		(elements
-			(
-				(put-workers-on-gas (trigger ((all_extractors_completed) 
-												(gas_saturated 0 =) 
-												(has_extractor))) 
-					start_collecting_gas -1)
-			)
+			;(
+			;	(put-workers-on-gas (trigger ((all_extractors_completed) 
+			;									(gas_saturated 0 =) 
+			;									(has_extractor))) 
+			;		start_collecting_gas -1)
+			;)
 			(
 				(build-extractor (trigger ((has_extractor_saturation 0 =)
 											(has_extractor 0 =)
@@ -68,8 +68,11 @@
 			)
 			
 			(
-				(train_zealots (trigger ((gateway_count 3 >=) (mineral_count 100 =) (supply_available 2 >)))
-					train-zealots-ap(seconds 0.05))
+				(train_zealots (trigger (
+								(gateway_count 1 >=)
+								(mineral_count 100 >=)
+								(supply_available 2 >)))
+					train-zealot-ap(seconds 0.05))
 			)
 			
 			(
