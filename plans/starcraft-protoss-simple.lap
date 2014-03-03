@@ -11,6 +11,7 @@
 	(AP upgrade_ground_weapons_ap (seconds 20.0) (upgrade_ground_weapons))
 	(AP upgrade_ground_armor_ap (seconds 20.0) (upgrade_ground_armor))
 	(AP idle_ap (seconds 1.0) (idle))
+	(AP send_to_expansion_ap (seconds 1.0) (send_drone_expansion))
 	
 	
 	; Competences
@@ -28,10 +29,23 @@
 	
 	; Worker creation competence
 	; Will produce more workers if the resources are available
-	(C worker-production-competence (minutes 10.0) (goal ((game_over)))
+	(C worker-production-competence (minutes 10.0) (goal ((game_over) (drone_count 50 >)))
 		(elements
 			(
-				(try-spawn-worker (trigger ((drone_count 50 <) 
+				(build_workers_late_game(trigger (
+											(expansion_count 1 >=)
+											(drone_count 25 >) 
+											(mineral_count 50 >=) 
+											(supply_available 2 >))) 
+					train_probe -1)
+				(build_workers_mid_game(trigger (
+											(zealot_count 9 >)
+											(drone_count 15 >) 
+											(mineral_count 50 >=) 
+											(supply_available 2 >))) 
+					train_probe -1)
+				(build_workers_initial (trigger (
+											(drone_count 15 <) 
 											(mineral_count 50 >=) 
 											(supply_available 2 >))) 
 					train_probe -1)
@@ -99,7 +113,7 @@
 			
 			(
 				; Build additional pylons
-				(build_supply (trigger ((predicted_supply_available 2 <=) pylon_count 3 >=))
+				(build_supply (trigger ((predicted_supply_available 2 <=) (pylon_count 3 >=)))
 					build_supply_competence(seconds 10.0))
 			)
 			
@@ -110,7 +124,12 @@
 			)
 			
 			(
-				(build_forges (trigger ((gateway_count 2 >=) (forge_count 3 <)))
+				(first_expansion (trigger ((gateway_count 1 >) (mineral_count 400 >) (expansion_count 0 =)))
+					send_to_expansion_ap (seconds 5.0))
+			)
+			
+			(
+				(build_forges (trigger ((gateway_count 2 >=) (forge_count 3 <) (mineral_count 150 >)))
 					build_forge_ap(seconds 1.0))
 			)
 			
@@ -134,17 +153,10 @@
 			)
 			
 			(
-				; Build an initial crop of workers
-				(build-worker-initial-amount (trigger ((drone_count 15 <))) 
+				; Buid more workers
+				(build-workers (trigger ((drone_count 50 <))) 
 					worker-production-competence(seconds 2.0))
-			)
-			
-			(
-				; Hold off building more workers until we have a slight bit of a defence
-				(build-worker-medium-amount (trigger ((drone_count 15 >) (zealot_count 7 >))) 
-					worker-production-competence(seconds 3.0))			
-			)
-			
+			)			
 			
 			(
 				; Do nothing
