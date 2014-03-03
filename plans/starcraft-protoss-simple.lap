@@ -5,8 +5,14 @@
 (
 	; Action Patterns
 	(AP build-pylon-ap (seconds 10.0) (build_pylon))
-	(AP build_gateway_ap (seconds 10.0) (build_gateway))
+	(AP build_gateway_ap (seconds 20.0) (build_gateway))
 	(AP train-zealot-ap (seconds 1.0)	(train_zealot))
+	(AP build_forge_ap (seconds 20.0) (build_forge))
+	(AP upgrade_ground_weapons_ap (seconds 20.0) (upgrade_ground_weapons))
+	(AP upgrade_ground_armor_ap (seconds 20.0) (upgrade_ground_armor))
+	(AP idle_ap (seconds 1.0) (idle))
+	
+	
 	; Competences
 	
 	; Builds a pylon
@@ -32,6 +38,21 @@
 			)
 		)
 	)
+	
+	; Needs work!!!
+	;(C research_ground_weapons (minutes 5.0) (goal (ground_weapons_level 3 =))
+	;	(elements
+	;		(
+	;			(research_level_3 (trigger ((mineral_count 200 >=) (gas_count 200 >=))
+	;				upgrade_ground_weapons_ap -1)
+	;			(research_level_2 (trigger ((mineral_count 150 >=) (gas_count 150 >=))
+	;				upgrade_ground_weapons_ap -1)
+	;			(research_level_1 (trigger ((mineral_count 100 >=) (gas_count 100 >=))
+	;				upgrade_ground_weapons_ap -1)
+	;		)
+	;	)
+	;
+	;)
 	
 	; Collecting gas competence
 	; Builds a geyser if the player doesn't have one
@@ -63,19 +84,21 @@
 			)
 			
 			(
-				(build_initial_gateways (trigger ((pylon_count 3 >=) (gateway_count 3 <) (mineral_count 150 >)))
+				; build 2 gateways
+				(build_initial_gateways (trigger ((pylon_count 3 >=) (gateway_count 1 <) (mineral_count 150 >)))
 					build_gateway_ap(seconds 1.0))
 			)
 			
 			(
 				(train_zealots (trigger (
-								(gateway_count 1 >=)
+								(completed_gateway_count 1 >=)
 								(mineral_count 100 >=)
 								(supply_available 4 >=)))
 					train-zealot-ap(seconds 0.05))
 			)
 			
 			(
+				; Build additional pylons
 				(build_supply (trigger ((predicted_supply_available 2 <=) pylon_count 3 >=))
 					build_supply_competence(seconds 10.0))
 			)
@@ -87,13 +110,37 @@
 			)
 			
 			(
+				(build_forges (trigger ((gateway_count 2 >=) (forge_count 3 <)))
+					build_forge_ap(seconds 1.0))
+			)
+			
+			(
+				(research_ground_weapons (trigger (
+											(free_forge_count 0 >) 
+											(ground_weapons_level 1 <) 
+											(mineral_count 100 >=)
+											(gas_count 100 >=)))
+					upgrade_ground_weapons_ap(seconds 60.0))
+			)
+			
+			
+			(
+				(research_ground_armor (trigger (
+											(free_forge_count 0 >) 
+											(ground_armor_level 1 <) 
+											(mineral_count 100 >=)
+											(gas_count 100 >=)))
+					upgrade_ground_armor_ap(seconds 60.0))
+			)
+			
+			(
 				; Build an initial crop of workers
 				(build-worker-initial-amount (trigger ((drone_count 15 <))) 
 					worker-production-competence(seconds 2.0))
 			)
 			
 			(
-				; Hold off building more workers until we have a bit of a defense
+				; Hold off building more workers until we have a slight bit of a defence
 				(build-worker-medium-amount (trigger ((drone_count 15 >) (zealot_count 7 >))) 
 					worker-production-competence(seconds 3.0))			
 			)
@@ -101,7 +148,7 @@
 			
 			(
 				; Do nothing
-				(idle (trigger ((life))) idle)
+				(idle (trigger ((life))) idle_ap)
 			)
 		)
 	)

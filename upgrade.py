@@ -14,8 +14,8 @@ class Upgrade(Behaviour):
         # initialise the behaviour by specifying that it provides the action
         # 'change_dir' and the senses 'see_cookie' and 'fail'. These have
         # to correspond to a method of the class.
-        Behaviour.__init__(self, agent,
-                           ("upgrade_zergling_speed",
+        Behaviour.__init__(self, agent,# Behaviours
+                           ("upgrade_zergling_speed", #Zerg
                             "upgrade_hydralisk_speed",
                             "upgrade_hydralisk_range",
                             "zerg_upgrade_flyer_attacks", "zerg_upgrade_flyer_carapace",
@@ -23,8 +23,10 @@ class Upgrade(Behaviour):
                             "zerg_upgrade_melee",
                             "zerg_upgrade_ranged",
                             "zerg_upgrade_carapace",
-                            "research_lurker_aspect"), # behaviours
-                           ("has_zergling_speed",
+                            "research_lurker_aspect", 
+                            "upgrade_ground_weapons","upgrade_ground_armor"), # Protoss
+                           # Senses
+                           ("has_zergling_speed", #Zerg
                             "has_hydralisk_speed",
                             "has_hydralisk_range",
                             "zerg_flyer_attack_level", "zerg_flyer_carapace_level",
@@ -32,7 +34,8 @@ class Upgrade(Behaviour):
                             "zerg_ranged_level", "currently_upgrading_ranged",
                             "zerg_carapace_level", "currently_upgrading_carapace",
                             "has_overlord_speed",
-                            "has_completed_lurker_aspect", "has_lurker_aspect")) # senses
+                            "has_completed_lurker_aspect", "has_lurker_aspect",
+                            "ground_weapons_level", "ground_armor_level")) # Protoss
         # These are behaviour variables
         
     def zerg_flyer_attack_level(self):
@@ -111,3 +114,18 @@ class Upgrade(Behaviour):
     def has_overlord_speed(self):
         return self.agent.BWBot.bot.upgradeManager.hasOverlordSpeed()
     
+    '''
+        Protoss!    
+    '''
+    
+    def upgrade_ground_weapons(self):
+        return self.agent.BWBot.bot.upgradeManager.upgradeGroundWeapons()
+    
+    def ground_weapons_level(self):
+        return self.agent.BWBot.bot.upgradeManager.getGroundWeaponsLevel()
+
+    def upgrade_ground_armor(self):
+        return self.agent.BWBot.bot.upgradeManager.upgradeGroundArmor()
+    
+    def ground_armor_level(self):
+        return self.agent.BWBot.bot.upgradeManager.getGroundArmorLevel()

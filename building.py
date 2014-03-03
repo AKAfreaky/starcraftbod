@@ -37,7 +37,7 @@ class Building(Behaviour):
                             "evo_chamber_count", "completed_evo_chamber_count",
                             "barracks_count", # Terran
                             "pylon_count", "gateway_count", "completed_gateway_count", # Protoss
-                            "forge_count", "completed_forge_count"
+                            "forge_count", "completed_forge_count", "free_forge_count"
                             ))
     
     def build_macro_hatchery(self):
@@ -196,3 +196,6 @@ class Building(Behaviour):
     
     def completed_forge_count(self):
         return self.agent.BWBot.bot.buildingManager.getCompletedForgeCount()
+    
+    def free_forge_count(self):
+        return self.agent.BWBot.bot.buildingManager.getFreeForgeCount()
