@@ -341,7 +341,7 @@
 			)
 			(
 				; Send drone to first expansion location to build second base / first expasnion
-				(send-to-first-expansion (trigger ((mineral_count 100 >=) 
+				(send-to-first-expansion (trigger ((mineral_count 250 >=) 
 					(expansion_count 0 =)
 					(drone_count 12 >)
 					)) send-drone-to-expansion(seconds 10.0))
@@ -401,7 +401,7 @@
 			(
 				; Build extra hatcheries for more production / larva
 				(build-macro-hatchery (trigger (
-					(mineral_count 325 >=) (hatchery_count 6 <)
+					(mineral_count 625 >=) (hatchery_count 6 <)
 					expansion_count 1 >)) 
 				build-macro-hatchery-ap(seconds 5.0))
 			)
