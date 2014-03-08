@@ -67,17 +67,18 @@ class Production(Behaviour):
     '''
     
     def train_SCV(self):
-        return self.agent.BWBot.bot.productionManager.trainSCV()
+        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Terran_SCV )
     
     def train_marine(self):
-        return self.agent.BWBot.bot.productionManager.trainMarine()
+        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Terran_Marine )
     
     '''
         Protoss Units
     '''
    
     def train_probe(self):
-        return self.agent.BWBot.bot.productionManager.trainProbe()
+        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Protoss_Probe )
     
     def train_zealot(self):
-        return self.agent.BWBot.bot.productionManager.trainZealot()
+        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Protoss_Zealot )
+    
