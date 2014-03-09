@@ -34,27 +34,27 @@ class Production(Behaviour):
 	'''
 	
     def spawn_drone(self):
-        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Drone )
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Zerg_Drone )
     
     def spawn_zerglings(self):
         #self.log.info("Spawning lings...")
-        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Zergling )
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Zerg_Zergling )
     
     def spawn_hydralisk(self):
         #self.log.info("Spawning hydra.")
-        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Hydralisk )
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Zerg_Hydralisk )
     
     def spawn_mutalisk(self):
         #self.log.info("Spawning muta.")
-        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Mutalisk )
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Zerg_Mutalisk )
     
     def spawn_lurker(self):
         self.log.info("Spawning Lurker.")
-        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Lurker )
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Zerg_Lurker )
     
     def spawn_overlord(self):
         #self.log.info("Spawning overlord.")
-        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Zerg_Overlord )
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Zerg_Overlord )
     
     def overlords_morphing(self):
         return self.agent.BWBot.bot.productionManager.getOverlordsInProduction()
@@ -67,18 +67,18 @@ class Production(Behaviour):
     '''
     
     def train_SCV(self):
-        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Terran_SCV )
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Terran_SCV )
     
     def train_marine(self):
-        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Terran_Marine )
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Terran_Marine )
     
     '''
         Protoss Units
     '''
    
     def train_probe(self):
-        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Protoss_Probe )
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Protoss_Probe )
     
     def train_zealot(self):
-        return self.agent.BWBot.bot.productionManager.spawn( UnitTypes.Protoss_Zealot )
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Protoss_Zealot )
     
