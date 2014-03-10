@@ -7,7 +7,7 @@
 	(AP build-supply-ap (seconds 10.0) (build_supply_depot))
 	(AP build-2rax-ap (seconds 10.0) (build_barracks build_barracks))
 	(AP train-marines-ap (seconds 1.0)	(train_marine))
-
+	(AP build_comsat_ap (seconds 10.0) (addon_comsat))
 	; Competences
 	
 	; Builds a supply depot
@@ -64,6 +64,12 @@
 	; Drives
 	(RDC life (goal ((game_over)))
 		(drives
+			(
+				(build_comsat (trigger ((mineral_count 50 >) (gas_count 50 >)))
+					build_comsat_ap(seconds 0.5))
+			)
+			
+			
 			(
 				(build_supply (trigger ((supply_available 2 <=)))
 					build_supply_competence(seconds 10.0))
