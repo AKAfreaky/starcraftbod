@@ -19,29 +19,84 @@ class Building(Behaviour):
         # 'change_dir' and the senses 'see_cookie' and 'fail'. These have
         # to correspond to a method of the class.
         Behaviour.__init__(self, agent,
-                           # Behaviours
-                           ("build_spawning_pool", "build_extractor", # Zerg
-                            "build_macro_hatchery", "build_hydralisk_den",
-                            "build_evolution_chamber", "build_creep_colony", 
-                            "send_drone_expansion", "build_expansion_hatchery",
-                            "build_spire", "upgrade_to_lair", "upgrade_to_sunken",
-                            "build_supply_depot", "build_barracks",    # Terran
-                            "build_pylon", "build_gateway", "build_forge" # Protoss
+                            # Behaviours
+                           
+                            # General
+                            ("build_extractor","send_drone_expansion", 
+                            "build_expansion_hatchery",
+                           
+                            # Zerg
+                            "build_spawning_pool", "build_macro_hatchery",
+                            "build_hydralisk_den", "build_evolution_chamber", 
+                            "build_creep_colony", "build_spire",
+                            "build_defiler_mound", "build_queens_nest",
+                            "build_ultralisk_cavern", "build_nydus_canal_start",
+                            "build_nydus_canal_end", "upgrade_to_greater_spire",                        
+                            "upgrade_to_lair", "upgrade_to_hive",
+                            "upgrade_to_sunken", "upgrade_to_spore",
+                            "infest_command_center", # this one may get moved
+                            
+                            # Terran
+                            "build_supply_depot", "build_barracks",
+                            "build_academy", "build_armory",
+                            "build_bunker", "build_engineering_bay",
+                            "build_factory", "build_missle_turret",
+                            "build_science_facility", "build_starport",
+                            "addon_comsat", "addon_nuke_silo", 
+                            "addon_control_tower", "addon_covert_ops",
+                            "addon_machine_shop", "addon_physics_lab",
+                              
+                            # Protoss
+                            "build_pylon", "build_gateway", 
+                            "build_arbiter_tribunal", "build_citadel",
+                            "build_cybernetics_core", "build_fleet_beacon",
+                            "build_observatory", "build_photon_cannon",
+                            "build_robotics_facility", "build_robotics_support_bay",
+                            "build_shield_battery", "build_stargate",
+                            "build_templar_archive", "build_forge"
                             ),
                             #Senses
-                           ("has_completed_extractor", "has_extractor", # Zerg
+
+                            #General
+                            ("has_completed_extractor", "has_extractor", 
+                            "check_drone_ready_expand",
+                           
+                            # Zerg
                             "has_spawning_pool", "has_completed_spawning_pool", 
                             "has_hydralisk_den", "has_completed_hydralisk_den",
                             "has_spire", "has_completed_spire",
                             "has_lair", "has_completed_lair",
-                            "hatchery_count", "check_drone_ready_expand",
+                            "hatchery_count", 
                             "colony_count", "creep_colony_count" , "expansion_count", "sunken_count",
                             "all_extractors_completed", "extractor_count", "has_extractor_saturation",
                             "evo_chamber_count", "completed_evo_chamber_count",
-                            "barracks_count", # Terran
-                            "pylon_count", "gateway_count", "completed_gateway_count", # Protoss
+                            
+                            # Terran
+                            "barracks_count", 
+                            
+                            # Protoss
+                            "pylon_count", "gateway_count", "completed_gateway_count", 
                             "forge_count", "completed_forge_count", "free_forge_count"
                             ))
+        
+    '''
+    == General Behaviours ==
+    '''
+    # Sends a drone to morph into an extractor
+    def build_extractor(self):
+        self.log.info("Attempting to build extractor")
+        return self.agent.BWBot.bot.buildingManager.buildExtractor()
+    
+    # Building expansions, need to do these in order:
+    def send_drone_expansion(self):
+        return self.agent.BWBot.bot.buildingManager.sendWorkerToExpansionLocation()
+    
+    # No longer needed, now worker will automatically start building once it reaches the location
+    def build_expansion_hatchery(self):
+        self.log.info("building expansion ")
+        return_value = self.agent.BWBot.bot.buildingManager.buildExpansionHatchery()
+        self.log.info("building expansion returned " + str(return_value) )
+        return return_value
     
     '''
     == Zerg Behaviours ==
@@ -67,32 +122,53 @@ class Building(Behaviour):
         self.log.info("Attempting to build creep colony")
         return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Zerg_Creep_Colony )
     
-    def upgrade_to_sunken(self):
-        self.log.info("Attempting to upgrade to sunken colony")
-        return self.agent.BWBot.bot.buildingManager.upgradeSunkenColony()
-    
-    # Sends a drone to morph into an extractor
-    def build_extractor(self):
-        self.log.info("Attempting to build extractor")
-        return self.agent.BWBot.bot.buildingManager.buildExtractor()
-    
-    # Building expansions, need to do these in order:
-    def send_drone_expansion(self):
-        return self.agent.BWBot.bot.buildingManager.sendWorkerToExpansionLocation()
-    
-    # No longer needed, now worker will automatically start building once it reaches the location
-    def build_expansion_hatchery(self):
-        self.log.info("building expansion ")
-        return_value = self.agent.BWBot.bot.buildingManager.buildExpansionHatchery()
-        self.log.info("building expansion returned " + str(return_value) )
-        return return_value
-    
     def build_spire(self):
         self.log.info("Attempting to build spire")
-        return self.agent.BWBot.bot.buildingManager.buildSpire()
+        return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Zerg_Spire )
+    
+    def build_defiler_mound(self):
+        self.log.info("Attempting to build defiler mound")
+        return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Zerg_Defiler_Mound )
+   
+    def build_queens_nest(self):
+        self.log.info("Attempting to build queen's nest")
+        return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Zerg_Queens_Nest )
+    
+    def build_ultralisk_cavern(self):
+        self.log.info("Attempting to build ultralisk cavern")
+        return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Zerg_Ultralisk_Cavern )
+    
+    def build_nydus_canal_start(self):
+        self.log.info("Attempting to build start for nydus canal")
+        return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Zerg_Nydus_Canal )
+    
+    def build_nydus_canal_end(self):
+        self.log.info("Building a nydus canal end not implemented yet!")
+        return false
+    
+    def upgrade_to_greater_spire(self):
+        print "Upgrade to greater spire not yet implemented"
+        return false
     
     def upgrade_to_lair(self):
         return self.agent.BWBot.bot.buildingManager.upgradeToLair()
+    
+    def upgrade_to_hive(self):
+        print "Upgrade to hive not yet implemented"
+        return false
+
+    def upgrade_to_sunken(self):
+        self.log.info("Attempting to upgrade to sunken colony")
+        return self.agent.BWBot.bot.buildingManager.upgradeSunkenColony()
+                           
+    def upgrade_to_spore(self):
+        print "Upgrade to spore colony not yet implemented"
+        return false    
+    
+    # this one may get moved
+    def infest_command_center(self):
+        print "Infesting command center not yet implemented"
+        return false    
     
     '''
     == Zerg Senses ==
@@ -172,10 +248,59 @@ class Building(Behaviour):
     '''
     
     def build_supply_depot(self):
-         return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Supply_Depot )
+        return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Supply_Depot )
     
     def build_barracks(self):
         return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Barracks )
+    
+    def build_academy(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Academy )
+        
+    def build_armory(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Armory )
+    
+    def build_bunker(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Bunker )
+    
+    def build_engineering_bay(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Engineering_Bay )
+    
+    def build_factory(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Factory )
+    
+    def build_missle_turret(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Missle_Turret )
+    
+    
+    def build_science_facility(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Science_Facility )
+    
+    def build_starport(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Starport )
+    
+    def addon_comsat(self):
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Terran_Comsat_Station )
+      
+    def addon_nuke_silo(self):
+        print "Addons not yet implemented"
+        return false    
+    
+    def addon_control_tower(self):
+        print "Addons not yet implemented"
+        return false
+    
+    def addon_covert_ops(self):
+        print "Addons not yet implemented"
+        return false
+        
+    def addon_machine_shop(self):
+        print "Addons not yet implemented"
+        return false
+    
+    def addon_physics_lab(self):
+        print "Addons not yet implemented"
+        return false
+    
     
     '''
     == Terran Senses ==
@@ -196,6 +321,39 @@ class Building(Behaviour):
     
     def build_forge(self):
         return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Forge )
+    
+    def build_arbiter_tribunal(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Arbiter_Tribunal )
+    
+    def build_citadel(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Citadel_of_Adun )
+    
+    def build_cybernetics_core(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Cybernetics_Core )
+    
+    def build_fleet_beacon(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Fleet_Beacon )
+    
+    def build_observatory(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Observatory )
+    
+    def build_photon_cannon(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Photon_Cannon )
+    
+    def build_robotics_facility(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Robotics_Facility )
+    
+    def build_robotics_support_bay(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Robotics_Support_Bay )
+    
+    def build_shield_battery(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Shield_Battery )
+    
+    def build_stargate(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Stargate )
+    
+    def build_templar_archive(self):
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Templar_Archive )
     
     '''
     == Protoss Senses ==
