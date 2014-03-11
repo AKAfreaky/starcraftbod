@@ -8,6 +8,9 @@ from POSH.jython_compat import *
 # behaviour base for POSH behaviours
 from POSH import Behaviour
 
+# enum for upgrade/tech types
+from jnibwapi.types.RaceType import RaceTypes
+
 class Intelligence(Behaviour):
     """ Contains behaviours and senses that are concerned with the 
     collection of intelligence of the map and the enemy positioning """
@@ -17,7 +20,8 @@ class Intelligence(Behaviour):
         # to correspond to a method of the class.
         Behaviour.__init__(self, agent,
                            ("scout_drone",), # behaviours
-                           ("found_enemy_base","scouting_drone",)) # senses
+                           ("found_enemy_base","scouting_drone", "is_enemy_zerg",
+                            "is_enemy_protoss", "is_enemy_terran")) # senses
         # These are behaviour variables
         self.isDroneScouting = False
         self.isOverlordScouting = False
@@ -35,4 +39,13 @@ class Intelligence(Behaviour):
     # Have we found the enemy base yet?
     def found_enemy_base(self):
         return self.agent.BWBot.bot.intelligenceManager.foundEnemyBase()
+    
+    def is_enemy_zerg(self):
+        return self.agent.BWBot.bot.intelligenceManager.isEnemyRace( RaceTypes.Zerg )
+    
+    def is_enemy_terran(self):
+        return self.agent.BWBot.bot.intelligenceManager.isEnemyRace( RaceTypes.Terran )
+    
+    def is_enemy_protoss(self):
+        return self.agent.BWBot.bot.intelligenceManager.isEnemyRace( RaceTypes.Protoss )
     
