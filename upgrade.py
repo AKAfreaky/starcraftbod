@@ -8,6 +8,10 @@ from POSH.jython_compat import *
 # behaviour base for POSH behaviours
 from POSH import Behaviour
 
+# enum for upgrade/tech types
+from jnibwapi.types.UpgradeType import UpgradeTypes
+from jnibwapi.types.TechType import TechTypes
+
 class Upgrade(Behaviour):
     """ Contains behaviours and senses that are concerned with the research of upgrades"""
     def __init__(self, agent):
@@ -119,7 +123,7 @@ class Upgrade(Behaviour):
     '''
     
     def upgrade_ground_weapons(self):
-        return self.agent.BWBot.bot.upgradeManager.upgradeGroundWeapons()
+        return self.agent.BWBot.bot.upgradeManager.upgrade( UpgradeTypes.Protoss_Ground_Weapons )
     
     def ground_weapons_level(self):
         return self.agent.BWBot.bot.upgradeManager.getGroundWeaponsLevel()
