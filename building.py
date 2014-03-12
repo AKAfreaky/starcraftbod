@@ -22,66 +22,102 @@ class Building(Behaviour):
                             # Behaviours
                            
                             # General
-                            ("build_extractor","send_drone_expansion", 
-                            "build_expansion_hatchery",
+                            ("build_extractor"          , "send_drone_expansion", 
+                            "build_expansion_hatchery"  ,
                            
                             # Zerg
-                            "build_spawning_pool", "build_macro_hatchery",
-                            "build_hydralisk_den", "build_evolution_chamber", 
-                            "build_creep_colony", "build_spire",
-                            "build_defiler_mound", "build_queens_nest",
+                            "build_spawning_pool"   , "build_macro_hatchery",
+                            "build_hydralisk_den"   , "build_evolution_chamber", 
+                            "build_creep_colony"    , "build_spire",
+                            "build_defiler_mound"   , "build_queens_nest",
                             "build_ultralisk_cavern", "build_nydus_canal_start",
-                            "build_nydus_canal_end", "upgrade_to_greater_spire",                        
-                            "upgrade_to_lair", "upgrade_to_hive",
-                            "upgrade_to_sunken", "upgrade_to_spore",
-                            "infest_command_center", # this one may get moved
+                            "build_nydus_canal_end" , "upgrade_to_greater_spire",                        
+                            "upgrade_to_lair"       , "upgrade_to_hive",
+                            "upgrade_to_sunken"     , "upgrade_to_spore",
+                            "infest_command_center" , # this one may get moved
                             
                             # Terran
-                            "build_supply_depot", "build_barracks",
-                            "build_academy", "build_armory",
-                            "build_bunker", "build_engineering_bay",
-                            "build_factory", "build_missle_turret",
+                            "build_supply_depot"    , "build_barracks",
+                            "build_academy"         , "build_armory",
+                            "build_bunker"          , "build_engineering_bay",
+                            "build_factory"         , "build_missle_turret",
                             "build_science_facility", "build_starport",
-                            "addon_comsat", "addon_nuke_silo", 
-                            "addon_control_tower", "addon_covert_ops",
-                            "addon_machine_shop", "addon_physics_lab",
+                            "addon_comsat"          , "addon_nuke_silo", 
+                            "addon_control_tower"   , "addon_covert_ops",
+                            "addon_machine_shop"    , "addon_physics_lab",
                               
                             # Protoss
-                            "build_pylon", "build_gateway", 
-                            "build_arbiter_tribunal", "build_citadel",
-                            "build_cybernetics_core", "build_fleet_beacon",
-                            "build_observatory", "build_photon_cannon",
-                            "build_robotics_facility", "build_robotics_support_bay",
-                            "build_shield_battery", "build_stargate",
-                            "build_templar_archive", "build_forge"
+                            "build_pylon"               , "build_gateway", 
+                            "build_arbiter_tribunal"    , "build_citadel",
+                            "build_cybernetics_core"    , "build_fleet_beacon",
+                            "build_observatory"         , "build_photon_cannon",
+                            "build_robotics_facility"   , "build_robotics_support_bay",
+                            "build_shield_battery"      , "build_stargate",
+                            "build_templar_archive"     , "build_forge"
                             ),
                             #Senses
 
                             #General
                             ("has_completed_extractor", "has_extractor", 
-                            "check_drone_ready_expand",
+                            "check_drone_ready_expand", "expansion_count",
+                            "all_extractors_completed", "extractor_count", 
+                            "has_extractor_saturation", # Note: This sense can be inaccurate on some maps as
+                                                        # it assumes all bases have gas which isn't always true
                            
                             # Zerg
-                            "has_spawning_pool", "has_completed_spawning_pool", 
-                            "has_hydralisk_den", "has_completed_hydralisk_den",
-                            "has_spire", "has_completed_spire",
-                            "has_lair", "has_completed_lair",
-                            "hatchery_count", 
-                            "colony_count", "creep_colony_count" , "expansion_count", "sunken_count",
-                            "all_extractors_completed", "extractor_count", "has_extractor_saturation",
-                            "evo_chamber_count", "completed_evo_chamber_count",
+                            "has_spawning_pool"     , "has_completed_spawning_pool", 
+                            "has_hydralisk_den"     , "has_completed_hydralisk_den",
+                            "has_spire"             , "has_completed_spire",
+                            "has_lair"              , "has_completed_lair",
+                            "has_hive"              , "has_completed_hive",
+                            "hatchery_count"        , 
+                            "colony_count"          , "creep_colony_count" ,
+                            "sunken_count"          , "spore_count",                
+                            "evo_chamber_count"     , "completed_evo_chamber_count",
+                            "has_defiler_mound"     , "has_completed_defiler_mound",
+                            "has_queens_nest"       , "has_completed_queens_nest",
+                            "has_ultralisk_cavern"  , "has_completed_ultralisk_cavern",
+                            "has_greater_spire"     , "has_completed_greater_spire",
                             
                             # Terran
-                            "barracks_count", 
+                            "barracks_count"        , "completed_barracks_count",
+                            "academy_count"         , "completed_academy_count",
+                            "armory_count"          , "completed_armory_count",
+                            "bunker_count"          , "completed_bunker_count",
+                            "engineering_bay_count" , "completed_engineering_bay_count",
+                            "factory_count"         , "completed_factory_count",
+                            "missle_turret_count"   , "completed_missle_turret_count",
+                            "science_facility_count", "completed_science_facility_count",
+                            "starport_count"        , "completed_starport_count",
+                            "comsat_count"          , "completed_comsat_count",
+                            "nuke_silo_count"       , "completed_nuke_silo_count",
+                            "control_tower_count"   , "completed_control_tower_count",
+                            "covert_ops_count"      , "completed_covert_ops_count",
+                            "machine_shop_count"    , "completed_machine_shop_count",
+                            "physics_lab_count"     , "completed_physics_lab_count",
                             
                             # Protoss
-                            "pylon_count", "gateway_count", "completed_gateway_count", 
-                            "forge_count", "completed_forge_count", "free_forge_count"
+                            "pylon_count"               , #completed pylons can be grokd from supply_count
+                            "gateway_count"             , "completed_gateway_count", 
+                            "forge_count"               , "completed_forge_count", "free_forge_count",
+                            "arbiter_tribunal_count"    , "completed_arbiter_tribunal_count",
+                            "citadel_count"             , "completed_citadel_count",
+                            "cybernetics_core_count"    , "completed_cybernetics_core_count",
+                            "fleet_beacon_count"        , "completed_fleet_beacon_count",
+                            "observatory_count"         , "completed_observatory_count",
+                            "photon_cannon_count"       , "completed_photon_cannon_count",
+                            "robotics_facility_count"   , "completed_robotics_facility_count",
+                            "robotics_support_bay_count", "completed_robotics_support_bay_count",
+                            "shield_battery_count"      , "completed_shield_battery_count",
+                            "stargate_count"            , "completed_stargate_count",
+                            "templar_archive_count"     , "completed_templar_archive_count",
+                            
                             ))
         
     '''
     == General Behaviours ==
     '''
+    
     # Sends a drone to morph into an extractor
     def build_extractor(self):
         self.log.info("Attempting to build extractor")
@@ -97,6 +133,37 @@ class Building(Behaviour):
         return_value = self.agent.BWBot.bot.buildingManager.buildExpansionHatchery()
         self.log.info("building expansion returned " + str(return_value) )
         return return_value
+    
+    '''
+    == General Senses
+    '''
+   
+     # Do we have a completed extractor
+    def has_completed_extractor(self):
+        return self.agent.BWBot.bot.buildingManager.hasExtractor(True)
+    
+    # Are all extractors completed
+    def extractor_count(self):
+        return self.agent.BWBot.bot.buildingManager.extractorCount()
+    
+    # Are all extractors completed
+    def all_extractors_completed(self):
+        return self.agent.BWBot.bot.buildingManager.allExtractorsCompleted()
+    
+    # Do we have an extractor in production, or one already completed
+    def has_extractor(self):
+        return self.agent.BWBot.bot.buildingManager.hasExtractor(False)
+    
+    # Does number of extractors == number of bases?
+    def has_extractor_saturation(self):
+        return self.agent.BWBot.bot.buildingManager.hasExtractorSaturation()
+    
+    # Once send_drone_expansion has been called, check for expansionDroneReady before building expansion
+    def check_drone_ready_expand(self):
+        return self.agent.BWBot.bot.buildingManager.expansionDroneReady()
+    
+    def expansion_count(self):
+        return self.agent.BWBot.bot.buildingManager.getExpansionCount()
     
     '''
     == Zerg Behaviours ==
@@ -174,74 +241,90 @@ class Building(Behaviour):
     == Zerg Senses ==
     '''
     
+    # Number of hatcheries/lairs/hives
     def hatchery_count(self):
-        return self.agent.BWBot.bot.buildingManager.getHatcheryCount()
+        hatcheries = self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Hatchery.ordinal(), False )
+        lairs = self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Lair.ordinal(), False )
+        hives = self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Hive.ordinal(), False )
+        
+        return ( hatcheries + lairs + hives )
     
     def has_spawning_pool(self):
-        return self.agent.BWBot.bot.buildingManager.hasSpawningPool(False)
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Spawning_Pool.ordinal(), False) > 0 )
     
     def has_completed_spawning_pool(self):
-        return self.agent.BWBot.bot.buildingManager.hasSpawningPool(True)
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Spawning_Pool.ordinal(), True) > 0 )
     
     def evo_chamber_count(self):
-        return self.agent.BWBot.bot.buildingManager.getEvolutionChamberCount(False)
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Evolution_Chamber.ordinal(), False)
     
     def completed_evo_chamber_count(self):
-        return self.agent.BWBot.bot.buildingManager.getEvolutionChamberCount(True)
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Evolution_Chamber.ordinal(), True)
     
     def colony_count(self):
-        return self.agent.BWBot.bot.buildingManager.getCompletedColonyCount()
+        creeps = self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Creep_Colony.ordinal(), True)
+        sunkens = self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Sunken_Colony.ordinal(), True)
+        spores = self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Spore_Colony.ordinal(), True)
+        
+        return ( creeps + sunkens + spores )
     
     def creep_colony_count(self):
-        return self.agent.BWBot.bot.buildingManager.getCompletedCreepColonyCount()
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Creep_Colony.ordinal(), True)
     
     def sunken_count(self):
-        return self.agent.BWBot.bot.buildingManager.getSunkenColonyCount()
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Sunken_Colony.ordinal(), True)
+    
+    def spore_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Spore_Colony.ordinal(), True)
     
     def has_hydralisk_den(self):
-        return self.agent.BWBot.bot.buildingManager.hasHydraliskDen(False)
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Hydralisk_Den.ordinal(), False) > 0 )
     
     def has_completed_hydralisk_den(self):
-        return self.agent.BWBot.bot.buildingManager.hasHydraliskDen(True)
-    
-    # Do we have a completed extractor
-    def has_completed_extractor(self):
-        return self.agent.BWBot.bot.buildingManager.hasExtractor(True)
-    
-    # Are all extractors completed
-    def extractor_count(self):
-        return self.agent.BWBot.bot.buildingManager.extractorCount()
-    
-    # Are all extractors completed
-    def all_extractors_completed(self):
-        return self.agent.BWBot.bot.buildingManager.allExtractorsCompleted()
-    
-    # Do we have an extractor in production, or one already completed
-    def has_extractor(self):
-        return self.agent.BWBot.bot.buildingManager.hasExtractor(False)
-    
-    # Does number of extractors == number of bases?
-    def has_extractor_saturation(self):
-        return self.agent.BWBot.bot.buildingManager.hasExtractorSaturation()
-    
-    # Once send_drone_expansion has been called, check for expansionDroneReady before building expansion
-    def check_drone_ready_expand(self):
-        return self.agent.BWBot.bot.buildingManager.expansionDroneReady()
-    
-    def expansion_count(self):
-        return self.agent.BWBot.bot.buildingManager.getExpansionCount()
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Hydralisk_Den.ordinal(), True) > 0 )
     
     def has_spire(self):
-        return self.agent.BWBot.bot.buildingManager.hasSpire(False)
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Spire.ordinal(), False) > 0 )
     
     def has_completed_spire(self):
-        return self.agent.BWBot.bot.buildingManager.hasSpire(True)
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Spire.ordinal(), True) > 0 )
     
     def has_lair(self):
-        return self.agent.BWBot.bot.buildingManager.hasLair(False)
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Lair.ordinal(), False) > 0 )
     
     def has_completed_lair(self):
-        return self.agent.BWBot.bot.buildingManager.hasLair(True)
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Lair.ordinal(), True) > 0 )
+    
+    def has_hive(self):
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Hive.ordinal(), False) > 0 )
+    
+    def has_completed_hive(self):
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Hive.ordinal(), True) > 0 )
+    
+    def has_defiler_mound(self):
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Defiler_Mound.ordinal(), False) > 0 )
+    
+    def has_completed_defiler_mound(self):
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Defiler_Mound.ordinal(), True) > 0 )
+    
+    def has_queens_nest(self):
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Queens_Nest.ordinal(), False) > 0 )
+    
+    def has_completed_queens_nest(self):
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Queens_Nest.ordinal(), True) > 0 )
+    
+    def has_ultralisk_cavern(self):
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Ultralisk_Cavern.ordinal(), False) > 0 )
+    
+    def has_completed_ultralisk_cavern(self):
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Ultralisk_Cavern.ordinal(), True) > 0 )
+    
+    def has_greater_spire(self):
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Greater_Spire.ordinal(), False) > 0 )
+    
+    def has_completed_greater_spire(self):
+        return ( self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Zerg_Greater_Spire.ordinal(), True) > 0 )
+
     
     '''
     == Terran Behaviours ==
@@ -269,9 +352,8 @@ class Building(Behaviour):
 		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Factory )
     
     def build_missle_turret(self):
-		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Missle_Turret )
-    
-    
+		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Missle_Turret )   
+   
     def build_science_facility(self):
 		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Terran_Science_Facility )
     
@@ -282,24 +364,19 @@ class Building(Behaviour):
         return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Terran_Comsat_Station )
       
     def addon_nuke_silo(self):
-        print "Addons not yet implemented"
-        return false    
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Terran_Nuclear_Silo )    
     
     def addon_control_tower(self):
-        print "Addons not yet implemented"
-        return false
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Terran_Control_Tower )
     
     def addon_covert_ops(self):
-        print "Addons not yet implemented"
-        return false
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Terran_Covert_Ops )
         
     def addon_machine_shop(self):
-        print "Addons not yet implemented"
-        return false
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Terran_Machine_Shop )
     
     def addon_physics_lab(self):
-        print "Addons not yet implemented"
-        return false
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Terran_Physics_Lab )
     
     
     '''
@@ -307,7 +384,97 @@ class Building(Behaviour):
     '''
     
     def barracks_count(self):
-        return self.agent.BWBot.bot.buildingManager.getBarracksCount()
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Barracks.ordinal(), False )
+    
+    def completed_barracks_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Barracks.ordinal(), True )
+        
+    def academy_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Academy.ordinal(), False )
+    
+    def completed_academy_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Academy.ordinal(), True )
+
+    def armory_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Armory.ordinal(), False )
+    
+    def completed_armory_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Armory.ordinal(), True )
+    
+    def bunker_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Bunker.ordinal(), False )
+    
+    def completed_bunker_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Bunker.ordinal(), True )
+    
+    def engineering_bay_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Engineering_Bay.ordinal(), False )
+    
+    def completed_engineering_bay_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Engineering_Bay.ordinal(), True )
+    
+    def factory_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Factory.ordinal(), False )
+    
+    def completed_factory_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Factory.ordinal(), True )
+    
+    def missle_turret_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Missle_Turret.ordinal(), False )
+    
+    def completed_missle_turret_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Missle_Turret.ordinal(), True )
+    
+    def science_facility_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Science_Facility.ordinal(), False )
+    
+    def completed_science_facility_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Science_Facility.ordinal(), True )
+    
+    def starport_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Starport.ordinal(), False )
+    
+    def completed_starport_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Starport.ordinal(), True )
+    
+    def comsat_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Comsat_Station.ordinal(), False )
+    
+    def completed_comsat_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Comsat_Stations.ordinal(), True )
+    
+    def nuke_silo_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Nuclear_Silo.ordinal(), False )
+    
+    def completed_nuke_silo_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Nuclear_Silo.ordinal(), True )
+    
+    def control_tower_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Control_Tower.ordinal(), False )
+    
+    def completed_control_tower_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Control_Tower.ordinal(), True )
+    
+    def covert_ops_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Covert_Ops.ordinal(), False )
+    
+    def completed_covert_ops_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Covert_Ops.ordinal(), True )
+    
+    def machine_shop_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Machine_Shop.ordinal(), False )
+    
+    def completed_machine_shop_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Machine_Shop.ordinal(), True )
+    
+    def physics_lab_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Physics_Lab.ordinal(), False )
+    
+    def completed_physics_lab_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Physics_Lab.ordinal(), True )
+    
+    
+
     
     '''
     == Protoss Behaviours ==
@@ -362,20 +529,87 @@ class Building(Behaviour):
         return self.agent.BWBot.bot.buildingManager.getPylonCount()
     
     
-    
     def gateway_count(self):
-        return self.agent.BWBot.bot.buildingManager.getGatewayCount()
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Gateway.ordinal(), False )
     
     def completed_gateway_count(self):
-        return self.agent.BWBot.bot.buildingManager.getCompletedGatewayCount()
-    
-    
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Gateway.ordinal(), True )
     
     def forge_count(self):
-        return self.agent.BWBot.bot.buildingManager.getForgeCount()
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Forge.ordinal(), False )
     
     def completed_forge_count(self):
-        return self.agent.BWBot.bot.buildingManager.getCompletedForgeCount()
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Forge.ordinal(), True )
     
     def free_forge_count(self):
         return self.agent.BWBot.bot.buildingManager.getFreeForgeCount()
+    
+    def arbiter_tribunal_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Arbiter_Tribunal.ordinal(), False )
+    
+    def completed_arbiter_tribunal_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Arbiter_Tribunal.ordinal(), True )
+    
+    def citadel_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Citadel_of_Adun.ordinal(), False )
+    
+    def completed_citadel_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Citadel_of_Adun.ordinal(), True )
+    
+    def cybernetics_core_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Cybernetics_Core.ordinal(), False )
+    
+    def completed_cybernetics_core_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Cybernetics_Core.ordinal(), True )
+    
+    def fleet_beacon_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Fleet_Beacon.ordinal(), False )
+    
+    def completed_fleet_beacon_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Fleet_Beacon.ordinal(), True )
+    
+    def observatory_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Observatory.ordinal(), False )
+    
+    def completed_observatory_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Observatory.ordinal(), True )
+    
+    def photon_cannon_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Photon_Cannon.ordinal(), False )
+    
+    def completed_photon_cannon_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Photon_Cannon.ordinal(), True )
+    
+    def robotics_facility_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Robotics_Facility.ordinal(), False )
+    
+    def completed_robotics_facility_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Robotics_Facility.ordinal(), True )
+
+    def robotics_support_bay_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Robotics_Support_Bay.ordinal(), False )
+
+    def completed_robotics_support_bay_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Robotics_Support_Bay.ordinal(), True )
+
+    def shield_battery_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Shield_Battery.ordinal(), False )
+
+    def completed_shield_battery_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Shield_Battery.ordinal(), True )
+
+    def stargate_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Stargate.ordinal(), False )
+
+    def completed_stargate_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Stargate.ordinal(), True )
+
+    def templar_archive_count(self):
+		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Templar_Archives.ordinal(), False )
+
+    def completed_templar_archive_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Templar_Archives.ordinal(), True )
+
+    
+    
+    
