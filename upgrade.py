@@ -83,35 +83,35 @@ class Upgrade(Behaviour):
                             "has_plague"                    , "has_consume",                            
                             
                             # Terran
-                            "has_marine_range"	, "has_medic_energy",   
-                            "vehicle_weapons_level"	, "vehicle_armor_level",    
-                            "ship_weapons_level"	, "ship_armor_level",   
-                            "has_wraith_energy"	, "has_ghost_sight", 
-                            "has_ghost_energy"	, "infantry_weapons_level",  
-                            "infantry_armor_level"	, "has_vulture_speed",  
-                            "has_goliath_range"	, "has_battlecruiser_energy", 
-                            "has_sci_vessel_energy"	, "has_stimpack",      
-                            "has_restoration"	, "has_flare",   
-                            "has_wraith_cloak"	, "has_ghost_cloak",  
-                            "has_lockdown"	, "has_siege_mode", 
-                            "has_spider_mines"	, "has_yamato_gun",   
-                            "has_emp"	, "has_irradiate",                   
+                            "has_marine_range"	            , "has_medic_energy",   
+                            "vehicle_weapons_level"	        , "vehicle_armor_level",    
+                            "ship_weapons_level"	        , "ship_armor_level",   
+                            "has_wraith_energy"	            , "has_ghost_sight", 
+                            "has_ghost_energy"	            , "infantry_weapons_level",  
+                            "infantry_armor_level"          , "has_vulture_speed",  
+                            "has_goliath_range"             , "has_battlecruiser_energy", 
+                            "has_sci_vessel_energy"         , "has_stimpack",      
+                            "has_restoration"               , "has_flare",   
+                            "has_wraith_cloak"              , "has_ghost_cloak",  
+                            "has_lockdown"                  , "has_siege_mode", 
+                            "has_spider_mines"              , "has_yamato_gun",   
+                            "has_emp"                       , "has_irradiate",                   
                                            
                             
                             # Protoss
-                            "ground_weapons_level"	, "ground_armor_level",            
-                            "has_arbiter_energy"	, "has_zealot_speed",              
-                            "air_weapons_level"	, "air_armor_level",               
-                            "has_dragoon_range"	, "has_scout_sight",               
-                            "has_scout_speed"	, "has_carrier_capacity",          
-                            "has_corsair_energy"	, "plasma_shields_level",          
-                            "has_observer_speed"	, "has_observer_sight",            
-                            "has_reaver_capacity"	, "has_scarab_damage",             
-                            "has_shuttle_speed"	, "has_dark_archon_energy",        
-                            "has_templar_energy"	, "has_recall",                    
-                            "has_stasis_field"	, "has_disruption_web",            
-                            "has_hallucination"	, "has_psionic_storm",             
-                            "has_maelstrom"	, "has_mind_control",              
+                            "ground_weapons_level"          , "ground_armor_level",            
+                            "has_arbiter_energy"            , "has_zealot_speed",              
+                            "air_weapons_level"	            , "air_armor_level",               
+                            "has_dragoon_range"	            , "has_scout_sight",               
+                            "has_scout_speed"	            , "has_carrier_capacity",          
+                            "has_corsair_energy"	        , "plasma_shields_level",          
+                            "has_observer_speed"	        , "has_observer_sight",            
+                            "has_reaver_capacity"	        , "has_scarab_damage",             
+                            "has_shuttle_speed"	            , "has_dark_archon_energy",        
+                            "has_templar_energy"	        , "has_recall",                    
+                            "has_stasis_field"	            , "has_disruption_web",            
+                            "has_hallucination"	            , "has_psionic_storm",             
+                            "has_maelstrom"	                , "has_mind_control",              
                             ))
         
         # These are behaviour variables
@@ -219,11 +219,13 @@ class Upgrade(Behaviour):
     def zerg_carapace_level(self):
         return self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( UpgradeTypes.Zerg_Carapace )
     
+    # There's a bug in jnibwapi / bwapi that means lurker aspect is always set as completed research, which sucks.
     def has_completed_lurker_aspect(self):
-        return self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Lurker_Aspect )
+        return self.agent.BWBot.bot.upgradeManager.hasLurkerAspect( True )
     
+    # So we'll have to use Simon's old methods here
     def has_lurker_aspect(self):
-        return self.agent.BWBot.bot.upgradeManager.isResearching( TechTypes.Lurker_Aspect )
+        return self.agent.BWBot.bot.upgradeManager.hasLurkerAspect( False )
     
     def has_zergling_speed(self):
         return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( UpgradeTypes.Metabolic_Boost ) > 0 )
@@ -236,10 +238,7 @@ class Upgrade(Behaviour):
     
     def has_overlord_speed(self):
         return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( UpgradeTypes.Pneumatized_Carapace ) > 0 )
-    
-    
-     # Zerg
-	
+   
     def has_defiler_energy(self):
         return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( UpgradeTypes.Metasynaptic_Node ) > 0 )
 
