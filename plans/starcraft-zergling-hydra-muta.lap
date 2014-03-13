@@ -34,7 +34,7 @@
 		(elements
 			(
 				(try-spawn-drone (trigger ((drone_count 50 <) 
-					(mineral_count 50 >=) (larvae_count 0 >) (predicted_supply_available 2 >))) spawn_drone -1)
+					(mineral_count 50 >=) (larvae_count 1 >) (predicted_supply_available 2 >))) spawn_drone -1)
 			)
 		)
 	)
@@ -458,7 +458,7 @@
 				; Spawn zerglings if nothing else to do
 				(spawn-zerglings (trigger (
 					(has_completed_spawning_pool) 
-					(predicted_supply_available 4 >)))
+					(supply_available 2 >)))
 					 spawn-zerglings-ap(seconds 0.05))
 			)
 			(
