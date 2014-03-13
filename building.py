@@ -214,23 +214,19 @@ class Building(Behaviour):
         return false
     
     def upgrade_to_greater_spire(self):
-        print "Upgrade to greater spire not yet implemented"
-        return false
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Zerg_Greater_Spire )
     
     def upgrade_to_lair(self):
-        return self.agent.BWBot.bot.buildingManager.upgradeToLair()
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Zerg_Lair )
     
     def upgrade_to_hive(self):
-        print "Upgrade to hive not yet implemented"
-        return false
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Zerg_Hive )
 
     def upgrade_to_sunken(self):
-        self.log.info("Attempting to upgrade to sunken colony")
-        return self.agent.BWBot.bot.buildingManager.upgradeSunkenColony()
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Zerg_Sunken_Colony )
                            
     def upgrade_to_spore(self):
-        print "Upgrade to spore colony not yet implemented"
-        return false    
+        return self.agent.BWBot.bot.productionManager.produceUnit( UnitTypes.Zerg_Spore_Colony )  
     
     # this one may get moved
     def infest_command_center(self):
@@ -496,7 +492,7 @@ class Building(Behaviour):
 		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Citadel_of_Adun )
     
     def build_cybernetics_core(self):
-		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Cybernetics_Core )
+        return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Cybernetics_Core )
     
     def build_fleet_beacon(self):
 		return self.agent.BWBot.bot.buildingManager.buildBuilding( UnitTypes.Protoss_Fleet_Beacon )
@@ -526,8 +522,7 @@ class Building(Behaviour):
     == Protoss Senses ==
     '''
     def pylon_count(self):
-        return self.agent.BWBot.bot.buildingManager.getPylonCount()
-    
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Pylon.ordinal(), False )
     
     def gateway_count(self):
         return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Gateway.ordinal(), False )
