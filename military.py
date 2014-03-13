@@ -8,6 +8,9 @@ from POSH.jython_compat import *
 # behaviour base for POSH behaviours
 from POSH import Behaviour
 
+# enum for unit types
+from jnibwapi.types.UnitType import UnitTypes
+
 class Military(Behaviour):
     """ Contains behaviours and senses that are concerned with the placement
     of buildings """
@@ -18,7 +21,9 @@ class Military(Behaviour):
         Behaviour.__init__(self, agent,
                            ("attack", "defend"), # behaviours
                            ("force_size", "is_attacking",
-                            "hydralisk_count", "zealot_count")) # senses
+                            "hydralisk_count", "zealot_count",
+                            "observer_count"
+                            )) # senses
         # These are behaviour variables
     
     def attack(self):
@@ -40,3 +45,6 @@ class Military(Behaviour):
     
     def zealot_count(self):
         return self.agent.BWBot.bot.militaryManager.getZealotCount()
+    
+    def observer_count(self):
+        return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Observer.ordinal(), False )
