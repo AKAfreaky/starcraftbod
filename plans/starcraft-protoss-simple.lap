@@ -4,20 +4,39 @@
 ; Simple Protoss AI
 (
 	; Action Patterns
-	(AP build-pylon-ap (seconds 10.0) (build_pylon))
+	
+	;Buildings
+	(AP build-pylon-ap (seconds 1.0) (build_pylon))
 	(AP build_gateway_ap (seconds 20.0) (build_gateway))
-	(AP train-zealot-ap (seconds 1.0)	(train_zealot))
 	(AP build_forge_ap (seconds 20.0) (build_forge))
+	(AP build_cyber_core_ap (seconds 10.0) (build_cybernetics_core))
+	(AP build_citadel_ap (seconds 10.0) (build_citadel))
+	
+	;Units
+	(AP train_zealot_ap (seconds 1.0)	(train_zealot))
+	(AP train_dragoon_ap (seocnds 1.0) (train_dragoon))
+	
+	;Research
 	(AP upgrade_ground_weapons_ap (seconds 20.0) (upgrade_ground_weapons))
 	(AP upgrade_ground_armor_ap (seconds 20.0) (upgrade_ground_armor))
+	(AP upgrade_shields_ap (seconds 20.0) (upgrade_plasma_shields))
+	(AP upgrade_zealot_speed_ap (seconds 20.0) (upgrade_zealot_speed))
+	(AP upgrade_dragoon_range_ap (seconds 20.0) (upgrade_dragoon_range))
+	
+	;Other
 	(AP idle_ap (seconds 1.0) (idle))
 	(AP send_to_expansion_ap (seconds 1.0) (send_drone_expansion))
+	
+	; Attack the enemy base
+	(AP attack-enemy (minutes 1.0) (attack))
+	; Defend
+	(AP set-to-defend (seconds 1.0) (defend))
 	
 	
 	; Competences
 	
 	; Builds a pylon
-	(C build_supply_competence (seconds 10.0) (goal ((supply_available 4 >)))
+	(C build_supply_competence (seconds 5.0) (goal ((supply_available 3 >)))
 		(elements
 			(
 				(build-pylon (trigger ((mineral_count 100 >)))
@@ -53,21 +72,6 @@
 		)
 	)
 	
-	; Needs work!!!
-	;(C research_ground_weapons (minutes 5.0) (goal (ground_weapons_level 3 =))
-	;	(elements
-	;		(
-	;			(research_level_3 (trigger ((mineral_count 200 >=) (gas_count 200 >=))
-	;				upgrade_ground_weapons_ap -1)
-	;			(research_level_2 (trigger ((mineral_count 150 >=) (gas_count 150 >=))
-	;				upgrade_ground_weapons_ap -1)
-	;			(research_level_1 (trigger ((mineral_count 100 >=) (gas_count 100 >=))
-	;				upgrade_ground_weapons_ap -1)
-	;		)
-	;	)
-	;
-	;)
-	
 	; Collecting gas competence
 	; Builds a geyser if the player doesn't have one
 	; Sends drones to mine gas if they aren't already
@@ -88,33 +92,144 @@
 		)
 	)
 	
+	; Builds an army of zealots and dragoons
+	(C build_forces_competence (seconds 0.75) (goal ((game_over)))
+		(elements
+			(
+				(train_dragoons (trigger (	(zealot_count 14 >)
+											(completed_cybernetics_core_count 1 >=)
+											(mineral_count 125 >=) 
+											(gas_count 50 >=) 
+											(supply_available 4 >=)
+										))
+					train_dragoon_ap -1)
+			)
+			
+			(
+				(train_zealots (trigger (	(completed_gateway_count 1 >=)
+											(mineral_count 100 >=)
+											(supply_available 4 >=)
+										))
+					train_zealot_ap -1)
+			)
+			
+		)
+	)
+	
+	; Builds a couple of observers
+	; Assumes that a cybernetics core has been completed
+	(C build_observers_competence (minutes 5.0) (goal ((observer_count 1 >)))
+		(elements
+			(
+				(build_robotics_facility (trigger (	(robotics_facility_count 0 =)
+													(mineral_count 200 >)
+													(gas_count 200 >)
+												))
+					build_robotics_facility -1)
+				
+				(build_observatory (trigger (	(completed_robotics_facility_count 0 >)
+												(observatory_count 0 =)
+												(mineral_count 50 >)
+												(gas_count 100 >)
+											))
+					build_observatory -1)
+					
+				(train_observers (trigger (	(completed_robotics_facility_count 0 >)
+											(completed_observatory_count 0 >)
+											(mineral_count 25 >)
+											(gas_count 75 >)
+											(supply_available 2 >=)
+										))
+					train_observer -1)
+			)
+		)
+	)
+	
+	; Send a scout to find enemy base competence
+	; Could be extended to have different scouting abilities
+	(C scouting-competence (seconds 1.0) (goal ((found_enemy_base)))
+		(elements
+			(
+				(scout-drone (trigger (	(scouting_drone 0 =)
+									)) 
+					scout_drone -1)
+			)
+		)
+	)
+	
+	(C attack_competence (seconds 1.0) (goal ((life) (is_attacking)))
+		(elements
+			(attack_zerg (trigger (	(is_enemy_zerg)
+									(force_size 80 >=)
+									(is_attacking 0 =)
+								))
+				attack-enemy -1)
+			(attack_terran (trigger (	(is_enemy_terran)
+										(force_size 36 >=)
+										(is_attacking 0 =)
+									))
+				attack-enemy -1)
+			(attack_protoss (trigger (	(is_enemy_protoss)
+										(force_size 50 >=)
+										(is_attacking 0 =)
+									))
+				attack-enemy -1)
+		)
+	)
+	
+	
 	
 	; Drives
 	(RDC life (goal ((game_over)))
 		(drives
 			(
-				(build_inital_pylons(trigger ((pylon_count 3 <)))
-					build_supply_competence(seconds 2.0))
-			)
-			
-			(
-				; build 2 gateways
-				(build_initial_gateways (trigger ((pylon_count 3 >=) (gateway_count 1 <) (mineral_count 150 >)))
-					build_gateway_ap(seconds 1.0))
-			)
-			
-			(
-				(train_zealots (trigger (
-								(completed_gateway_count 1 >=)
-								(mineral_count 100 >=)
-								(supply_available 4 >=)))
-					train-zealot-ap(seconds 0.05))
+				(build_inital_pylons (trigger (	(pylon_count 3 <) 
+												(mineral_count 100 >=)
+											))
+					build_supply_competence(seconds 0.05))
 			)
 			
 			(
 				; Build additional pylons
-				(build_supply (trigger ((predicted_supply_available 2 <=) (pylon_count 3 >=)))
-					build_supply_competence(seconds 10.0))
+				(build_supply (trigger (	(predicted_supply_available 5 <) 
+											(pylon_count 3 >=)
+										))
+					build_supply_competence(seconds 5.0))
+			)
+			
+			(
+				; build 2 gateways
+				(build_initial_gateways (trigger ((pylon_count 3 >=) (gateway_count 2 <) (mineral_count 150 >)))
+					build_gateway_ap(seconds 1.0))
+			)
+			
+			(
+				(build_forces (trigger ( 	(completed_gateway_count 1 >=)
+											(supply_available 4 >=)
+										))
+					build_forces_competence(seconds 0.05))
+			)
+			
+			(
+				(build_observers (trigger (	(is_enemy_zerg)
+											(completed_cybernetics_core_count 0 >)
+										))
+						build_observers_competence(seconds 0.5))
+			)
+			
+			(
+				; Attack the enemy if forces are available
+				(attack-enemy (trigger (	(is_attacking 0 =)
+										))
+				attack_competence(seconds 0.5))
+			)
+			
+			(
+				; Defend the base / retreat when forces are low
+				(defend-base (trigger (	(force_size 21 <)
+										(is_attacking)
+									)) 
+					set-to-defend(seconds 0.5))
 			)
 			
 			(
@@ -134,22 +249,101 @@
 			)
 			
 			(
-				(research_ground_weapons (trigger (
-											(free_forge_count 0 >) 
-											(ground_weapons_level 1 <) 
-											(mineral_count 100 >=)
-											(gas_count 100 >=)))
-					upgrade_ground_weapons_ap(seconds 60.0))
+				(build_cybernetics_core (trigger (	(gateway_count 2 >=) 
+													(mineral_count 200 >)
+													(cybernetics_core_count 0 =)	
+												))
+					build_cyber_core_ap(seconds 1.0))
 			)
 			
+			(
+				(build_another_gateway (trigger (	(completed_cybernetics_core_count 0 >)
+													(mineral_count 150 >)
+													(gateway_count 3 >)
+											))
+					build_gateway_ap(seconds 1.0))
+			)
 			
 			(
-				(research_ground_armor (trigger (
+				(build_citadel (trigger (	(completed_cybernetics_core_count 0 >) 
+													(mineral_count 150 >)
+													(gas_count 100 >)
+													(citadel_count 0 =)	
+												))
+					build_citadel_ap(seconds 1.0))
+			)
+			
+			(
+				(upgrade_ground_weapons_1 (trigger (	(free_forge_count 0 >) 
+														(ground_weapons_level 0 =)
+														(mineral_count 100 >=)
+														(gas_count 100 >=)
+													))
+					upgrade_ground_weapons_ap(seconds 5.0))
+			)	
+			
+			(
+				(research_ground_armor_1 (trigger (
 											(free_forge_count 0 >) 
-											(ground_armor_level 1 <) 
+											(ground_armor_level 0 =) 
 											(mineral_count 100 >=)
 											(gas_count 100 >=)))
-					upgrade_ground_armor_ap(seconds 60.0))
+					upgrade_ground_armor_ap(seconds 2.0))
+			)
+			
+			(
+				(upgrade_zealot_speed (trigger (	(completed_citadel_count 0 >)
+													(mineral_count 150 >)
+													(gas_count 150 >)
+													(has_zealot_speed 0 =)
+												))
+					upgrade_zealot_speed_ap(seconds 2.0))
+			)
+			
+			(
+				(upgrade_dragoon_range (trigger (	(completed_cybernetics_core_count 0 >)
+													(mineral_count 150 >)
+													(gas_count 150 >)
+													(has_dragoon_range 0 =)
+												))
+					upgrade_dragoon_range_ap(seconds 2.0))
+			)
+			
+			(
+				(research_shields_1 (trigger (	(free_forge_count 0 >) 
+												(plasma_shields_level 0 =) 
+												(mineral_count 200 >=)
+												(gas_count 200 >=)
+											))
+					upgrade_shields_ap(seconds 2.0))
+			)
+			
+			(
+				(research_shields_2 (trigger (	(free_forge_count 0 >) 
+												(plasma_shields_level 1 =) 
+												(mineral_count 300 >=)
+												(gas_count 300 >=)
+												(completed_cybernetics_core_count 0 >)
+											))
+					upgrade_shields_ap(seconds 2.0))
+			)
+			
+			(
+				(research_shields_3 (trigger (	(free_forge_count 0 >) 
+												(plasma_shields_level 2 =) 
+												(mineral_count 250 >=)
+												(gas_count 250 >=)
+												(completed_cybernetics_core_count 0 >)
+											))
+					upgrade_shields_ap(seconds 2.0))
+			)
+			
+			(
+				; Scout to find enemy base
+				(find-enemy (trigger (	(found_enemy_base 0 =) 
+										(gateway_count 0 >)
+									)) 
+					scouting-competence(seconds 5.0))
 			)
 			
 			(
@@ -162,6 +356,51 @@
 				; Do nothing
 				(idle (trigger ((life))) idle_ap)
 			)
+			
+			; Unused Drives ( Don't currently build a templar archive )
+			;(
+			;	(upgrade_ground_weapons_2 (trigger (	(free_forge_count 0 >) 
+			;											(ground_weapons_level 1 =)
+			;											(mineral_count 150 >=)
+			;											(gas_count 150 >=)
+			;											(completed_templar_archive_count 0 >)
+			;										))
+			;		upgrade_ground_weapons_ap(seconds 5.0))
+			;)
+			
+			;(
+			;	(upgrade_ground_weapons_3 (trigger (	(free_forge_count 0 >) 
+			;											(ground_weapons_level 2 =)
+			;											(mineral_count 200 >=)
+			;											(gas_count 200 >=)
+			;											(completed_templar_archive_count 0 >)
+			;										))
+			;		upgrade_ground_weapons_ap(seconds 2.0))
+			;)
+			
+			;(
+			;	(research_ground_armor_2 (trigger (
+			;								(free_forge_count 0 >) 
+			;								(ground_armor_level 1 =) 
+			;								(mineral_count 175 >=)
+			;								(gas_count 175 >=)
+			;								(completed_templar_archive_count 0 >)
+			;							))
+			;		upgrade_ground_armor_ap(seconds 2.0))
+			;)
+			
+			;(
+			;	(research_ground_armor_3 (trigger (
+			;								(free_forge_count 0 >) 
+			;								(ground_armor_level 2 =) 
+			;								(mineral_count 250 >=)
+			;								(gas_count 250 >=)
+			;								(completed_templar_archive_count 0 >)
+			;							))
+			;		upgrade_ground_armor_ap(seconds 2.0))
+			;)
+			
+			
 		)
 	)
 )
