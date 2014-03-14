@@ -13,6 +13,7 @@
 	(AP build_citadel_ap (seconds 10.0) (build_citadel))
 	
 	;Units
+	(AP train_probe_ap (seconds 1.0)	(train_probe))
 	(AP train_zealot_ap (seconds 1.0)	(train_zealot))
 	(AP train_dragoon_ap (seocnds 1.0) (train_dragoon))
 	
@@ -36,7 +37,7 @@
 	; Competences
 	
 	; Builds a pylon
-	(C build_supply_competence (seconds 5.0) (goal ((supply_available 3 >)))
+	(C build_supply_competence (seconds 1.0) (goal ((supply_available 3 >)))
 		(elements
 			(
 				(build-pylon (trigger ((mineral_count 100 >)))
@@ -48,7 +49,7 @@
 	
 	; Worker creation competence
 	; Will produce more workers if the resources are available
-	(C worker-production-competence (minutes 10.0) (goal ((game_over) (drone_count 50 >)))
+	(C worker-production-competence (seconds 1.0) (goal ((game_over) (drone_count 50 >)))
 		(elements
 			(
 				(build_workers_late_game(trigger (
@@ -59,12 +60,12 @@
 					train_probe -1)
 				(build_workers_mid_game(trigger (
 											(zealot_count 9 >)
-											(drone_count 15 >) 
+											(drone_count 10 >) 
 											(mineral_count 50 >=) 
 											(supply_available 2 >))) 
 					train_probe -1)
 				(build_workers_initial (trigger (
-											(drone_count 15 <) 
+											(drone_count 11 <) 
 											(mineral_count 50 >=) 
 											(supply_available 2 >))) 
 					train_probe -1)
@@ -96,7 +97,7 @@
 	(C build_forces_competence (seconds 0.75) (goal ((game_over)))
 		(elements
 			(
-				(train_dragoons (trigger (	(zealot_count 14 >)
+				(train_dragoons (trigger (	(zealot_count 18 >)
 											(completed_cybernetics_core_count 1 >=)
 											(mineral_count 125 >=) 
 											(gas_count 50 >=) 
@@ -118,7 +119,7 @@
 	
 	; Builds a couple of observers
 	; Assumes that a cybernetics core has been completed
-	(C build_observers_competence (minutes 5.0) (goal ((observer_count 1 >)))
+	(C build_observers_competence (seconds 5.0) (goal ((observer_count 1 >)))
 		(elements
 			(
 				(build_robotics_facility (trigger (	(robotics_facility_count 0 =)
@@ -165,11 +166,18 @@
 								))
 				attack-enemy -1)
 			(attack_terran (trigger (	(is_enemy_terran)
-										(force_size 36 >=)
+										(force_size 25 >=)
 										(is_attacking 0 =)
 									))
 				attack-enemy -1)
 			(attack_protoss (trigger (	(is_enemy_protoss)
+										(force_size 50 >=)
+										(is_attacking 0 =)
+									))
+				attack-enemy -1)
+			(attack_random (trigger (	(is_enemy_zerg 0 =)
+										(is_enemy_terran 0 =)
+										(is_enemy_protoss 0 =)
 										(force_size 50 >=)
 										(is_attacking 0 =)
 									))
@@ -186,7 +194,7 @@
 				(build_inital_pylons (trigger (	(pylon_count 3 <) 
 												(mineral_count 100 >=)
 											))
-					build_supply_competence(seconds 0.05))
+					build-pylon-ap(seconds 0.05))
 			)
 			
 			(
@@ -218,18 +226,19 @@
 			)
 			
 			(
-				; Attack the enemy if forces are available
-				(attack-enemy (trigger (	(is_attacking 0 =)
-										))
-				attack_competence(seconds 0.5))
-			)
-			
-			(
 				; Defend the base / retreat when forces are low
-				(defend-base (trigger (	(force_size 21 <)
+				(defend-base (trigger (	(force_size 25 <)
 										(is_attacking)
 									)) 
 					set-to-defend(seconds 0.5))
+			)
+			
+			(
+				; Attack the enemy if forces are available
+				(attack-enemy (trigger (	(is_attacking 0 =)
+											(force_size 25 >=)
+										))
+				attack_competence(seconds 0.5))
 			)
 			
 			(
@@ -347,10 +356,30 @@
 			)
 			
 			(
-				; Buid more workers
-				(build-workers (trigger ((drone_count 50 <))) 
-					worker-production-competence(seconds 2.0))
-			)			
+				(build_workers_late_game(trigger (
+											(expansion_count 1 >=)
+											(zealot_count 9 >)
+											(drone_count 40 <) 
+											(mineral_count 50 >=) 
+											(supply_available 2 >))) 
+					train_probe_ap (seconds 1.5))
+			)
+			(
+				(build_workers_mid_game(trigger (
+											(zealot_count 9 >)
+											(drone_count 26 <) 
+											(mineral_count 50 >=) 
+											(supply_available 2 >))) 
+					train_probe_ap (seconds 1.5))
+			)
+			
+			(
+				(build_workers_initial (trigger (
+											(drone_count 11 <) 
+											(mineral_count 50 >=) 
+											(supply_available 2 >))) 
+					train_probe_ap (seconds 1.5))			
+			)
 			
 			(
 				; Do nothing
