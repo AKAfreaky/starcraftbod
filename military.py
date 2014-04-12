@@ -22,7 +22,8 @@ class Military(Behaviour):
                            ("attack", "defend"), # behaviours
                            ("force_size", "is_attacking",
                             "hydralisk_count", "zealot_count",
-                            "observer_count"
+                            "observer_count", "marine_medic_count",
+                            "marine_medic_ratio"
                             )) # senses
         # These are behaviour variables
     
@@ -48,3 +49,26 @@ class Military(Behaviour):
     
     def observer_count(self):
         return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Protoss_Observer.ordinal(), False )
+    
+    def marine_medic_count(self):
+        print "MMC 1"
+        marines = self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Marine.ordinal(), False )
+        print "MMC 2"
+        medics = self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Medic.ordinal(), False )
+        print "MMC 3"
+        return (marines + medics)
+    
+    def marine_medic_ratio(self):
+        print "MMR 1"
+        marines = self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Marine.ordinal(), False )
+        print "MMR 2"
+        medics = self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Medic.ordinal(), False )
+        print "MMR 3"
+        # Don't want to divide by zero
+        if(medics == 0):
+            medics = 1
+        
+        return (marines / medics)
+        
+        
+    
