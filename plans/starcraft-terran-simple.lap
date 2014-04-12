@@ -5,9 +5,13 @@
 (
 	; Action Patterns
 	(AP build-supply-ap (seconds 10.0) (build_supply_depot))
-	(AP build-2rax-ap (seconds 10.0) (build_barracks build_barracks))
-	(AP train-marines-ap (seconds 1.0)	(train_marine))
+	(AP build-rax-ap (seconds 10.0) 	(build_barracks))
+	(AP train_marine_ap (seconds 1.0)	(train_marine))
+	(AP train_medic_ap (seconds 1.0)	(train_medic))
 	(AP build_comsat_ap (seconds 10.0) (addon_comsat))
+	
+	(AP idle_ap (seconds 1.0) (idle))
+	
 	; Competences
 	
 	; Builds a supply depot
@@ -21,41 +25,69 @@
 	
 	)
 	
-	(C build_two_barracks_competence (seconds 20.0) (goal ((barracks_count 2 >=)))
-		(elements
-			(
-				(build-two-barracks (trigger ((mineral_count 300 >)))
-				 build-2rax-ap -1)
-			)
-		)
-	)
-	
 	; Worker creation competence
 	; Will produce more workers if the resources are available
-	(C worker-production-competence (minutes 10.0) (goal ((game_over)))
+	(C worker-production-competence (minutes 10.0) (goal ((game_over) (drone_count 50 >)))
 		(elements
 			(
-				(try-spawn-worker (trigger ((drone_count 50 <) (mineral_count 50 >=) (predicted_supply_available 2 >))) 
+				(build_workers_late_game(trigger (
+											(expansion_count 1 >=)
+											(drone_count 30 <) 
+											(mineral_count 50 >=) 
+											(supply_available 2 >))) 
+					train_SCV -1)
+				(build_workers_mid_game(trigger (
+											(drone_count 18 <) 
+											(mineral_count 50 >=) 
+											(supply_available 2 >))) 
+					train_SCV -1)
+				(build_workers_initial (trigger (
+											(drone_count 9 <) 
+											(mineral_count 50 >=) 
+											(supply_available 2 >))) 
 					train_SCV -1)
 			)
 		)
 	)
+	
+	
+	
 	
 	; Collecting gas competence
 	; Builds a geyser if the player doesn't have one
 	; Sends drones to mine gas if they aren't already
 	(C collect-gas-competence (seconds 1.0) (goal ((gas_saturated)))
 		(elements
-			(
-				(put-workers-on-gas (trigger ((all_extractors_completed) 
-					(gas_saturated 0 =) 
-					(has_extractor))) start_collecting_gas -1)
-			)
+			;(
+			;	(put-workers-on-gas (trigger ((all_extractors_completed) 
+			;		(gas_saturated 0 =) 
+			;		(has_extractor))) start_collecting_gas -1)
+			;)
 			(
 				(build-extractor (trigger ((has_extractor_saturation 0 =)
 					(has_extractor 0 =)
 					(mineral_count 25 >=)
-					)) build_extractor 1)
+					)) build_extractor -1)
+			)
+		)
+	)
+	
+	;Train a bunch of marines and medics, trying to keep a 6 to 1 ratio
+	(C train_MM_comp (minutes 10.0) (goal ((game_over)))
+		(elements
+			(
+				(train_medics (trigger 	((completed_academy_count 0 >)
+										(mineral_count 50 >=)
+										(gas_count 25 >=)
+										(supply_available 2 >=)
+										(marine_medic_count 31 <)
+										(marine_medic_ratio 6 >=)))
+					train_medic_ap -1)
+				(CE_train_marines (trigger ((mineral_count 50 >=)
+										(supply_available 2 >=)
+										(marine_medic_count 31 <)
+										(marine_medic_ratio 6 <=)))
+					train_marine_ap -1)
 			)
 		)
 	)
@@ -65,24 +97,15 @@
 	(RDC life (goal ((game_over)))
 		(drives
 			(
-				(build_comsat (trigger ((mineral_count 50 >) (gas_count 50 >)))
-					build_comsat_ap(seconds 0.5))
-			)
-			
-			
-			(
-				(build_supply (trigger ((supply_available 2 <=)))
-					build_supply_competence(seconds 10.0))
-			)	
-				
-			(
-				(build-worker-low-amount (trigger ((drone_count 15 <))) 
-					worker-production-competence(seconds 1.0))
+				(build_supply (trigger ((supply_available 2 <=)
+										(mineral_count 100 >=)))
+					build-supply-ap(seconds 1.0))
 			)
 			
 			(
-				(build-barracks (trigger ((mineral_count 300 >=) 
-					(barracks_count 0 =))) build_two_barracks_competence(seconds 10.0))
+				(build-barracks (trigger (	(mineral_count 150 >=)
+											(barracks_count 2 <)))
+					build-rax-ap(seconds 1.0))
 			)
 			
 			(
@@ -92,22 +115,20 @@
 			)
 			
 			(
-				(spawn-marines (trigger (
-					(barracks_count 0 >) 
-					(mineral_count 50 >=)
-					(predicted_supply_available 2 >)))
-					 train-marines-ap(seconds 0.05))
+				(train_marines_medics (trigger ( (completed_barracks_count 0 >) ))
+					train_MM_comp(seconds 0.05))
 			)
 			
 			(
-				(build-worker-medium-amount (trigger ((drone_count 15 >))) 
-					worker-production-competence(seconds 3.0))
-			)
+				; Buid more workers
+				(build-workers (trigger ((drone_count 50 <))) 
+					worker-production-competence(seconds 2.0))
+			)	
 			
 			
 			(
-				; If not building more zerglings, then build more drones if possible
-				(build-more-drones (trigger ((life))) worker-production-competence)
+				; Do nothing
+				(idle (trigger ((life))) idle_ap)
 			)
 		)
 	)
