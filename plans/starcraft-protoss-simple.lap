@@ -4,13 +4,13 @@
 ; Simple Protoss AI
 (
 	; Action Patterns
-	
 	;Buildings
 	(AP build-pylon-ap (seconds 1.0) (build_pylon))
 	(AP build_gateway_ap (seconds 20.0) (build_gateway))
 	(AP build_forge_ap (seconds 20.0) (build_forge))
 	(AP build_cyber_core_ap (seconds 10.0) (build_cybernetics_core))
 	(AP build_citadel_ap (seconds 10.0) (build_citadel))
+	(AP build_extractor_ap (seconds 1.0) (build_extractor))
 	
 	;Units
 	(AP train_probe_ap (seconds 1.0)	(train_probe))
@@ -57,13 +57,17 @@
 											(drone_count 25 >) 
 											(mineral_count 50 >=) 
 											(supply_available 2 >))) 
-					train_probe -1)
+					train_probe -1) 
+			)
+			(
 				(build_workers_mid_game(trigger (
 											(zealot_count 9 >)
 											(drone_count 10 >) 
 											(mineral_count 50 >=) 
 											(supply_available 2 >))) 
 					train_probe -1)
+			)
+			(
 				(build_workers_initial (trigger (
 											(drone_count 11 <) 
 											(mineral_count 50 >=) 
@@ -122,19 +126,6 @@
 	(C build_observers_competence (seconds 5.0) (goal ((observer_count 1 >)))
 		(elements
 			(
-				(build_robotics_facility (trigger (	(robotics_facility_count 0 =)
-													(mineral_count 200 >)
-													(gas_count 200 >)
-												))
-					build_robotics_facility -1)
-				
-				(build_observatory (trigger (	(completed_robotics_facility_count 0 >)
-												(observatory_count 0 =)
-												(mineral_count 50 >)
-												(gas_count 100 >)
-											))
-					build_observatory -1)
-					
 				(train_observers (trigger (	(completed_robotics_facility_count 0 >)
 											(completed_observatory_count 0 >)
 											(mineral_count 25 >)
@@ -142,6 +133,21 @@
 											(supply_available 2 >=)
 										))
 					train_observer -1)
+			)
+			(
+				(build_observatory (trigger (	(completed_robotics_facility_count 0 >)
+												(observatory_count 0 =)
+												(mineral_count 50 >)
+												(gas_count 100 >)
+											))
+					build_observatory -1)
+			)
+			(
+				(build_robotics_facility (trigger (	(robotics_facility_count 0 =)
+													(mineral_count 200 >)
+													(gas_count 200 >)
+												))
+					build_robotics_facility -1)
 			)
 		)
 	)
@@ -151,8 +157,7 @@
 	(C scouting-competence (seconds 1.0) (goal ((found_enemy_base)))
 		(elements
 			(
-				(scout-drone (trigger (	(scouting_drone 0 =)
-									)) 
+				(scout-drone (trigger ((scouting_drone 0 =))) 
 					scout_drone -1)
 			)
 		)
@@ -160,28 +165,35 @@
 	
 	(C attack_competence (seconds 1.0) (goal ((life) (is_attacking)))
 		(elements
-			(attack_zerg (trigger (	(is_enemy_zerg)
-									(force_size 80 >=)
-									(is_attacking 0 =)
-								))
-				attack-enemy -1)
-			(attack_terran (trigger (	(is_enemy_terran)
-										(force_size 25 >=)
+			(
+				(attack_zerg (trigger (	(is_enemy_zerg)
+										(force_size 80 >=)
 										(is_attacking 0 =)
 									))
-				attack-enemy -1)
-			(attack_protoss (trigger (	(is_enemy_protoss)
-										(force_size 50 >=)
-										(is_attacking 0 =)
-									))
-				attack-enemy -1)
-			(attack_random (trigger (	(is_enemy_zerg 0 =)
-										(is_enemy_terran 0 =)
-										(is_enemy_protoss 0 =)
-										(force_size 50 >=)
-										(is_attacking 0 =)
-									))
-				attack-enemy -1)
+					attack-enemy -1)
+			)
+			(
+				(attack_terran (trigger (	(is_enemy_terran)
+											(force_size 25 >=)
+											(is_attacking 0 =)
+										))
+					attack-enemy -1)
+			)
+				(attack_protoss (trigger (	(is_enemy_protoss)
+											(force_size 50 >=)
+											(is_attacking 0 =)
+										))
+					attack-enemy -1)
+			)
+			(
+				(attack_random (trigger (	(is_enemy_zerg 0 =)
+											(is_enemy_terran 0 =)
+											(is_enemy_protoss 0 =)
+											(force_size 50 >=)
+											(is_attacking 0 =)
+										))
+					attack-enemy -1)
+			)
 		)
 	)
 	
@@ -202,7 +214,7 @@
 				(build_supply (trigger (	(predicted_supply_available 5 <) 
 											(pylon_count 3 >=)
 										))
-					build_supply_competence(seconds 5.0))
+					build_supply_competence(seconds 1.0))
 			)
 			
 			(
@@ -215,22 +227,22 @@
 				(build_forces (trigger ( 	(completed_gateway_count 1 >=)
 											(supply_available 4 >=)
 										))
-					build_forces_competence(seconds 0.05))
+					build_forces_competence(seconds 3.0))
 			)
 			
 			(
 				(build_observers (trigger (	(is_enemy_zerg)
 											(completed_cybernetics_core_count 0 >)
 										))
-						build_observers_competence(seconds 0.5))
+						build_observers_competence(seconds 10.0))
 			)
 			
 			(
 				; Defend the base / retreat when forces are low
-				(defend-base (trigger (	(force_size 25 <)
+				(defend-base (trigger (	(force_size 24 <=)
 										(is_attacking)
 									)) 
-					set-to-defend(seconds 0.5))
+					set-to-defend(seconds 2.5))
 			)
 			
 			(
@@ -243,8 +255,12 @@
 			
 			(
 				; Start collecting gas
-				(get-vespene (trigger ((pylon_count 3 >=) (gas_saturated 0 =))) 
-					collect-gas-competence(seconds 4.0))
+				(get-vespene (trigger (	(pylon_count 3 >=) 
+										(gas_saturated 0 =)
+										(has_extractor_saturation 0 =)
+										(has_extractor 0 =)
+										(mineral_count 100 >=))) 
+					build_extractor_ap(seconds 2.0))
 			)
 			
 			(
@@ -350,7 +366,7 @@
 			(
 				; Scout to find enemy base
 				(find-enemy (trigger (	(found_enemy_base 0 =) 
-										(gateway_count 0 >)
+										(pylon_count 0 >)
 									)) 
 					scouting-competence(seconds 5.0))
 			)
@@ -386,7 +402,7 @@
 				(idle (trigger ((life))) idle_ap)
 			)
 			
-			; Unused Drives ( Don't currently build a templar archive )
+			; Unused Drives ( Don't currently build a templar archive so will never be activated )
 			;(
 			;	(upgrade_ground_weapons_2 (trigger (	(free_forge_count 0 >) 
 			;											(ground_weapons_level 1 =)

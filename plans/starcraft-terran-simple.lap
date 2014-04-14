@@ -6,52 +6,43 @@
 	; Action Patterns
 	(AP build-supply-ap (seconds 10.0) (build_supply_depot))
 	(AP build-rax-ap (seconds 10.0) 	(build_barracks))
+	(AP build-academy-ap (seconds 10.0) (build_academy))
 	(AP train_marine_ap (seconds 1.0)	(train_marine))
 	(AP train_medic_ap (seconds 1.0)	(train_medic))
 	(AP build_comsat_ap (seconds 10.0) (addon_comsat))
+	(AP build_extractor_ap (seconds 1.0) (build_extractor))
 	
 	(AP idle_ap (seconds 1.0) (idle))
 	
-	; Competences
+	; Attack the enemy base
+	(AP attack-enemy (minutes 1.0) (attack))
+	; Defend
+	(AP set-to-defend (seconds 1.0) (defend))
 	
-	; Builds a supply depot
-	(C build_supply_competence (seconds 10.0) (goal ((supply_available 4 >)))
-		(elements
-			(
-				(build-supply-depot (trigger ((mineral_count 100 >)))
-				 build-supply-ap -1)
-			)
-		)
-	
-	)
-	
+	; Competences	
 	; Worker creation competence
 	; Will produce more workers if the resources are available
-	(C worker-production-competence (minutes 10.0) (goal ((game_over) (drone_count 50 >)))
+	(C worker-production-competence (minutes 10.0) (goal ((game_over) (drone_count 40 >=)))
 		(elements
 			(
-				(build_workers_late_game(trigger (
+				(CE_build_workers_late_game(trigger (
 											(expansion_count 1 >=)
-											(drone_count 30 <) 
-											(mineral_count 50 >=) 
-											(supply_available 2 >))) 
+											(marine_medic_count 15 >)
+											(drone_count 40 <) 
+											)) 
 					train_SCV -1)
-				(build_workers_mid_game(trigger (
+				(CE_build_workers_mid_game(trigger (
 											(drone_count 18 <) 
-											(mineral_count 50 >=) 
-											(supply_available 2 >))) 
+											(marine_medic_count 10 >)
+											)) 
 					train_SCV -1)
-				(build_workers_initial (trigger (
+				(CE_build_workers_initial (trigger (
 											(drone_count 9 <) 
-											(mineral_count 50 >=) 
-											(supply_available 2 >))) 
+											)) 
 					train_SCV -1)
 			)
 		)
 	)
-	
-	
-	
 	
 	; Collecting gas competence
 	; Builds a geyser if the player doesn't have one
@@ -64,7 +55,7 @@
 			;		(has_extractor))) start_collecting_gas -1)
 			;)
 			(
-				(build-extractor (trigger ((has_extractor_saturation 0 =)
+				(CE_build-extractor (trigger ((has_extractor_saturation 0 =)
 					(has_extractor 0 =)
 					(mineral_count 25 >=)
 					)) build_extractor -1)
@@ -72,22 +63,29 @@
 		)
 	)
 	
-	;Train a bunch of marines and medics, trying to keep a 6 to 1 ratio
+	;Train a bunch of marines and medics, trying to keep a 8 to 1 ratio
 	(C train_MM_comp (minutes 10.0) (goal ((game_over)))
 		(elements
 			(
-				(train_medics (trigger 	((completed_academy_count 0 >)
-										(mineral_count 50 >=)
+				(CE_train_medics (trigger 	((completed_academy_count 0 >)
 										(gas_count 25 >=)
-										(supply_available 2 >=)
 										(marine_medic_count 31 <)
-										(marine_medic_ratio 6 >=)))
+										(marine_medic_ratio 8 >=)))
 					train_medic_ap -1)
-				(CE_train_marines (trigger ((mineral_count 50 >=)
-										(supply_available 2 >=)
-										(marine_medic_count 31 <)
-										(marine_medic_ratio 6 <=)))
+				(CE_train_marines (trigger ((marine_medic_count 31 <)
+											(marine_medic_ratio 8 <=)))
 					train_marine_ap -1)
+			)
+		)
+	)
+	
+	; Send a scout to find enemy base competence
+	; Could be extended to have different scouting abilities
+	(C scouting-competence (seconds 1.0) (goal ((found_enemy_base)))
+		(elements
+			(
+				(scout-drone (trigger ((scouting_drone 0 =))) 
+					scout_drone -1)
 			)
 		)
 	)
@@ -97,9 +95,9 @@
 	(RDC life (goal ((game_over)))
 		(drives
 			(
-				(build_supply (trigger ((supply_available 2 <=)
+				(build_supply (trigger ((predicted_supply_available 2 <=)
 										(mineral_count 100 >=)))
-					build-supply-ap(seconds 1.0))
+					build-supply-ap(seconds 3.0))
 			)
 			
 			(
@@ -110,21 +108,54 @@
 			
 			(
 				; Start collecting gas
-				(get-vespene (trigger ((barracks_count 2 >) (gas_saturated 0 =))) 
-					collect-gas-competence(seconds 4.0))
+				(get-vespene (trigger (	(academy_count 0 >) 
+										(gas_saturated 0 =)
+										(has_extractor_saturation 0 =)
+										(has_extractor 0 =)
+										(mineral_count 100 >=))) 
+					build_extractor_ap(seconds 2.0))
 			)
 			
 			(
-				(train_marines_medics (trigger ( (completed_barracks_count 0 >) ))
-					train_MM_comp(seconds 0.05))
+				(build-academy (trigger (	(mineral_count 150 >=)
+											(academy_count 0 =)
+											(completed_barracks_count 0 >)))
+					build-academy-ap(seconds 1.0))
+			)
+			
+			(
+				(train_marines_medics (trigger ( (completed_barracks_count 0 >)
+												 (supply_available 2 >=)
+												 (mineral_count 50 >=)))
+					train_MM_comp(seconds 3.0))
+			)
+			
+			(
+				; Attack the enemy if forces are available
+				(attack-enemy (trigger ((force_size 50 >=) (is_attacking 0 =)))
+				attack-enemy(seconds 1.5))
+			)
+			(
+				; Defend the base / retreat when forces are low
+				(defend-base (trigger ((force_size 20 <) (is_attacking))) 
+					set-to-defend(seconds 0.5))
+			)
+			
+			(
+				; Scout to find enemy base
+				(find-enemy (trigger (	(found_enemy_base 0 =) 
+										(barracks_count 0 >)
+									)) 
+					scouting-competence(seconds 5.0))
 			)
 			
 			(
 				; Buid more workers
-				(build-workers (trigger ((drone_count 50 <))) 
+				(build-workers (trigger ((drone_count 50 <)
+										 (supply_available 2 >=)
+										 (mineral_count 50 >=))) 
 					worker-production-competence(seconds 2.0))
 			)	
-			
 			
 			(
 				; Do nothing
