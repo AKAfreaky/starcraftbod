@@ -174,11 +174,12 @@
 			)
 			(
 				(attack_terran (trigger (	(is_enemy_terran)
-											(force_size 25 >=)
+											(force_size 50 >=)
 											(is_attacking 0 =)
 										))
 					attack-enemy -1)
 			)
+			(
 				(attack_protoss (trigger (	(is_enemy_protoss)
 											(force_size 50 >=)
 											(is_attacking 0 =)

@@ -81,10 +81,10 @@ class Building(Behaviour):
                             
                             # Terran
                             "barracks_count"        , "completed_barracks_count",
-                            "academy_count"         , "completed_academy_count",
+                            "academy_count"         , "completed_academy_count", "have_free_academy",
                             "armory_count"          , "completed_armory_count",
                             "bunker_count"          , "completed_bunker_count",
-                            "engineering_bay_count" , "completed_engineering_bay_count",
+                            "engineering_bay_count" , "completed_engineering_bay_count", "have_free_bay",
                             "factory_count"         , "completed_factory_count",
                             "missle_turret_count"   , "completed_missle_turret_count",
                             "science_facility_count", "completed_science_facility_count",
@@ -469,8 +469,11 @@ class Building(Behaviour):
     def completed_physics_lab_count(self):
 		return self.agent.BWBot.bot.unitManager.getUnitCount( UnitTypes.Terran_Physics_Lab.ordinal(), True )
     
+    def have_free_bay(self):
+        return self.agent.BWBot.bot.unitManager.haveFreeUnitofType( UnitTypes.Terran_Engineering_Bay.ordinal() )
     
-
+    def have_free_academy(self):
+        return self.agent.BWBot.bot.unitManager.haveFreeUnitofType( UnitTypes.Terran_Academy.ordinal() )
     
     '''
     == Protoss Behaviours ==

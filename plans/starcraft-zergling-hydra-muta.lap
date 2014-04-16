@@ -153,15 +153,11 @@
 	(C collect-gas-competence (seconds 1.0) (goal ((gas_saturated)))
 		(elements
 			(
-				(put-workers-on-gas (trigger ((all_extractors_completed) 
-					(gas_saturated 0 =) 
-					(has_extractor))) start_collecting_gas -1)
-			)
-			(
 				(build-extractor (trigger ((has_extractor_saturation 0 =)
-					(has_extractor 0 =)
-					(mineral_count 25 >=)
-					)) build_extractor 1)
+											(has_extractor 0 =)
+											(mineral_count 25 >=)
+										))
+					build_extractor 1)
 			)
 		)
 	)
@@ -326,7 +322,7 @@
 			)
 			(
 				; Defend the base / retreat when forces are low
-				(defend-base (trigger ((force_size 40 <) (is_attacking))) 
+				(defend-base (trigger ((force_size 20 <) (is_attacking))) 
 					set-to-defend(seconds 0.5))
 			)
 			(
@@ -334,8 +330,8 @@
 				(get-vespene (trigger (	(has_completed_spawning_pool)
 										(has_extractor_saturation 0 =)
 										(mineral_count 25 >=))) 
-					;build-extractor-ap(seconds 4.0))
-					build_extractor(seconds 4.0))
+					collect-gas-competence(seconds 4.0))
+					;build_extractor(seconds 4.0))
 			)
 			(
 				; Send drone to second expansion location to build third base / second expansion

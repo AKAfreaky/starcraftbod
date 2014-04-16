@@ -258,22 +258,22 @@ class Upgrade(Behaviour):
         return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( UpgradeTypes.Anabolic_Synthesis ) > 0 )
 
     def has_ensnare(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Ensnare ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Ensnare ) )
                  
     def has_broodlings(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Spawn_Broodlings ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Spawn_Broodlings ) )
 
     def has_burrow(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Burrowing ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Burrowing ) )
 
     def has_overlord_transport(self):
         return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( UpgradeTypes.Ventral_Sacs ) > 0 )
 
     def has_plague(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Plague ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Plague ) )
 
     def has_consume(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Consume ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Consume ) )
 
     '''
     == Terran Behaviours ==
@@ -406,37 +406,37 @@ class Upgrade(Behaviour):
         return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( UpgradeTypes.Metasynaptic_Node ) > 0 )
 
     def has_stimpack(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Stim_Packs ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Stim_Packs ) )
 
     def has_restoration(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Restoration ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Restoration ) )
 
     def has_flare(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Optical_Flare ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Optical_Flare ) )
 
     def has_wraith_cloak(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Cloaking_Field ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Cloaking_Field ) )
 
     def has_ghost_cloak(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Personnel_Cloaking ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Personnel_Cloaking  ) )
 
     def has_lockdown(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Lockdown ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Lockdown ) )
 
     def has_siege_mode(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Tank_Siege_Mode ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Tank_Siege_Mode ) )
 
     def has_spider_mines(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Spider_Mines ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Spider_Mines ) )
 
     def has_yamato_gun(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Yamato_Gun ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Yamato_Gun ) )
 
     def has_emp(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.EMP_Shockwave ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.EMP_Shockwave ) )
 
     def has_irradiate(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Irradiate ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Irradiate ) )
 
     '''
     == Protoss Behaviours
@@ -582,22 +582,22 @@ class Upgrade(Behaviour):
         return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( UpgradeTypes.Khaydarin_Amulet ) > 0 )
 
     def has_recall(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Recall ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Recall ) )
 
     def has_stasis_field(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Stasis_Field ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Stasis_Field ) )
 
     def has_disruption_web(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Disruption_Web ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Disruption_Web ) )
 
     def has_hallucination(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Hallucination ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Hallucination ) )
 
     def has_psionic_storm(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Psionic_Storm ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Psionic_Storm ) )
 
     def has_maelstrom(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Maelstrom ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Maelstrom ) )
 
     def has_mind_control(self):
-        return ( self.agent.BWBot.bot.upgradeManager.getUpgradeLevel( TechTypes.Mind_Control ) > 0 )
+        return ( self.agent.BWBot.bot.upgradeManager.haveResearched( TechTypes.Mind_Control ) )

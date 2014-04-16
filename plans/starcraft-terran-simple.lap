@@ -12,12 +12,22 @@
 	(AP build_comsat_ap (seconds 10.0) (addon_comsat))
 	(AP build_extractor_ap (seconds 1.0) (build_extractor))
 	
+	(AP build_engineering_ap (seconds 10.0) (build_engineering_bay))
+	
+	(AP send_to_expansion_ap (seconds 1.0) (send_drone_expansion))
 	(AP idle_ap (seconds 1.0) (idle))
 	
 	; Attack the enemy base
 	(AP attack-enemy (minutes 1.0) (attack))
 	; Defend
 	(AP set-to-defend (seconds 1.0) (defend))
+	
+	;Research
+	(AP upgrade_infantry_weapons_ap (seconds 20.0) (upgrade_infantry_weapons))
+	(AP upgrade_infantry_armor_ap (seconds 20.0) (upgrade_infantry_armor))
+	(AP research_stimpack_ap (seconds 20.0) (research_stimpack))
+	(AP upgrade_marine_range_ap (seconds 20.0) (upgrade_marine_range))
+	(AP upgrade_medic_renergy_ap (seconds 20.0) (upgrade_medic_energy))
 	
 	; Competences	
 	; Worker creation competence
@@ -33,11 +43,11 @@
 					train_SCV -1)
 				(CE_build_workers_mid_game(trigger (
 											(drone_count 18 <) 
-											(marine_medic_count 10 >)
+											(marine_medic_count 7 >)
 											)) 
 					train_SCV -1)
 				(CE_build_workers_initial (trigger (
-											(drone_count 9 <) 
+											(drone_count 10 <) 
 											)) 
 					train_SCV -1)
 			)
@@ -69,10 +79,10 @@
 			(
 				(CE_train_medics (trigger 	((completed_academy_count 0 >)
 										(gas_count 25 >=)
-										(marine_medic_count 31 <)
+										(marine_medic_count 34 <)
 										(marine_medic_ratio 8 >=)))
 					train_medic_ap -1)
-				(CE_train_marines (trigger ((marine_medic_count 31 <)
+				(CE_train_marines (trigger ((marine_medic_count 34 <)
 											(marine_medic_ratio 8 <=)))
 					train_marine_ap -1)
 			)
@@ -86,6 +96,41 @@
 			(
 				(scout-drone (trigger ((scouting_drone 0 =))) 
 					scout_drone -1)
+			)
+		)
+	)
+	
+	(C attack_competence (seconds 1.0) (goal ((life) (is_attacking)))
+		(elements
+			(
+				(attack_zerg (trigger (	(is_enemy_zerg)
+										(force_size 50 >=)
+										(is_attacking 0 =)
+									))
+					attack-enemy -1)
+			)
+			(
+				(attack_terran (trigger (	(is_enemy_terran)
+											(force_size 38 >=)
+											(is_attacking 0 =)
+										))
+					attack-enemy -1)
+			)
+			(
+				(attack_protoss (trigger (	(is_enemy_protoss)
+											(force_size 50 >=)
+											(is_attacking 0 =)
+										))
+					attack-enemy -1)
+			)
+			(
+				(attack_random (trigger (	(is_enemy_zerg 0 =)
+											(is_enemy_terran 0 =)
+											(is_enemy_protoss 0 =)
+											(force_size 50 >=)
+											(is_attacking 0 =)
+										))
+					attack-enemy -1)
 			)
 		)
 	)
@@ -117,6 +162,22 @@
 			)
 			
 			(
+				; Defend the base / retreat when forces are low
+				(defend-base (trigger (	(force_size 20 <=)
+										(is_attacking)
+									)) 
+					set-to-defend(seconds 2.5))
+			)
+			
+			(
+				; Attack the enemy if forces are available
+				(attack-enemy (trigger (	(is_attacking 0 =)
+											(force_size 25 >=)
+										))
+				attack_competence(seconds 0.5))
+			)
+			
+			(
 				(build-academy (trigger (	(mineral_count 150 >=)
 											(academy_count 0 =)
 											(completed_barracks_count 0 >)))
@@ -124,23 +185,51 @@
 			)
 			
 			(
+				(build_engineering (trigger (	(mineral_count 125 >=)
+											(engineering_bay_count 0 =)
+											(completed_barracks_count 0 >)))
+					build_engineering_ap(seconds 4.0))
+			)
+			
+			(
 				(train_marines_medics (trigger ( (completed_barracks_count 0 >)
 												 (supply_available 2 >=)
 												 (mineral_count 50 >=)))
-					train_MM_comp(seconds 3.0))
+					train_MM_comp(seconds 2.0))
 			)
 			
 			(
-				; Attack the enemy if forces are available
-				(attack-enemy (trigger ((force_size 50 >=) (is_attacking 0 =)))
-				attack-enemy(seconds 1.5))
-			)
-			(
-				; Defend the base / retreat when forces are low
-				(defend-base (trigger ((force_size 20 <) (is_attacking))) 
-					set-to-defend(seconds 0.5))
+				(research_stimpacks (trigger (	(have_free_academy) 
+												(has_stimpack 0 =)
+												(mineral_count 100 >=)
+												(gas_count 100 >=)
+											))
+					research_stimpack_ap(seconds 2.0))
 			)
 			
+			(
+				(upgrade_infantry_weapons_1 (trigger (	(have_free_bay) 
+														(infantry_weapons_level 0 =)
+														(mineral_count 100 >=)
+														(gas_count 100 >=)
+													))
+					upgrade_infantry_weapons_ap(seconds 2.0))
+			)
+			
+			(
+				(upgrade_infantry_armor_1 (trigger (	(have_free_bay) 
+														(infantry_armor_level 0 =)
+														(mineral_count 100 >=)
+														(gas_count 100 >=)
+													))
+					upgrade_infantry_armor_ap(seconds 2.0))
+			)
+			
+			(
+				(expand (trigger ((completed_barracks_count 1 >) (mineral_count 400 >) (expansion_count 2 <)))
+					send_to_expansion_ap (seconds 1.0))
+			)
+
 			(
 				; Scout to find enemy base
 				(find-enemy (trigger (	(found_enemy_base 0 =) 
@@ -154,7 +243,7 @@
 				(build-workers (trigger ((drone_count 50 <)
 										 (supply_available 2 >=)
 										 (mineral_count 50 >=))) 
-					worker-production-competence(seconds 2.0))
+					worker-production-competence(seconds 4.0))
 			)	
 			
 			(
